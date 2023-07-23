@@ -1,0 +1,73 @@
+{
+	"@@local" : "en",
+    "camera": "Camera",
+    "@camera": {
+        "type": "text",
+        "context": "Camera button"
+    },
+    "stalls": "Stalls",
+    "@stalls": {
+        "type": "text",
+        "context": "Stalls"
+    },
+    "other": "Other",
+    "@other": {
+        "type": "text",
+        "context": "Other"
+    },
+    "logreg": "Login/Register",
+    "@logreg": {
+        "type": "text",
+        "context": "Login or Register"
+    },
+    "welcome": "Welcome,",
+    "@welcome": {
+        "type": "text",
+        "context": "Welcome,"
+    },
+    "createaccount": "Create Account,",
+    "@createaccount": {
+        "type": "text",
+        "context": "Create Account,"
+    },
+    "signincont": "Sign in to continue!",
+    "@signincont": {
+        "type": "text",
+        "context": "Sign in to continue!"
+    },
+    "signupcont": "Sign up to get started!",
+    "@signupcont": {
+        "type": "text",
+        "context": "Sign up to get started!"
+    },
+    "forgotpassword": "Forgot Paassword",
+    "@forgotpassword": {
+        "type": "text",
+        "context": "Forgot Paassword"
+    },
+    "newuser": "I'm a new user",
+    "@newuser": {
+        "type": "text",
+        "context": "I'm a new user"
+    },
+    "login": "Log In",
+    "@login": {
+        "type": "text",
+        "context": "Log In"
+    },
+    "signup": "Sign Up",
+    "@signup": {
+        "type": "text",
+        "context": "Sign Up"
+    },
+    "settings": "Settings",
+    "@settings": {
+        "type": "text",
+        "context": "Settings"
+    },
+    "language": "Language",
+    "@language": {
+        "type": "text",
+        "context": "Language"
+    }
+}
