@@ -16,6 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late CameraDescription firstCamera;
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -45,6 +46,18 @@ class _HomeState extends State<Home> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initCamera();
+  }
+
+  Future<void> initCamera() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final cameras = await availableCameras();
+    firstCamera = cameras.first;
   }
 
   @override
@@ -120,15 +133,12 @@ class _HomeState extends State<Home> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          WidgetsFlutterBinding.ensureInitialized();
-          final cameras = await availableCameras();
-          final firstCamera = cameras.first;
-          await Navigator.of(context).push(MaterialPageRoute(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => TakePicture(camera: firstCamera),
           ));
         },
-        child: const Icon(Icons.camera),
+        child: const Icon(Icons.camera_alt),
       ),
     );
   }

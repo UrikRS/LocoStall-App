@@ -26,6 +26,7 @@ class _TakePictureState extends State<TakePicture> {
     _controller = CameraController(
       widget.camera,
       ResolutionPreset.medium,
+      enableAudio: false,
     );
 
     _initializeControllerFuture = _controller.initialize();
@@ -49,18 +50,28 @@ class _TakePictureState extends State<TakePicture> {
         }
       },
     );
-    FloatingActionButton(
-      onPressed: () async {
-        try {
-          await _initializeControllerFuture;
-          final image = await _controller.takePicture();
-        } catch (e) {
-          print(e);
-        }
-      },
-      child: const Icon(Icons.camera_alt),
+
+    return Scaffold(
+      body: Stack(children: [
+        SizedBox(
+          height: double.infinity,
+          child: CameraPreview(_controller),
+        )
+      ]),
+      floatingActionButton: FloatingActionButton(
+        heroTag: TakePicture,
+        onPressed: () async {
+          try {
+            await _initializeControllerFuture;
+            final image = await _controller.takePicture();
+            print('picture taked');
+          } catch (e) {
+            print(e);
+          }
+        },
+        child: const Icon(Icons.camera),
+      ),
     );
-    return Container();
   }
 }
 
