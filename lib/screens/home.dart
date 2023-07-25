@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    StallsTab(),
+    ShopsTab(),
     Text(
       'TODO:',
       style: optionStyle,
@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    // initCamera();
+    initCamera();
   }
 
   Future<void> initCamera() async {

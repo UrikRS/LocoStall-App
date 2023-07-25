@@ -5,13 +5,29 @@ class Shop {
   String lang;
   String name;
   String shopId;
-  List<Menu> menu;
 
   Shop(
     this.id,
     this.lang,
     this.name,
     this.shopId,
-    this.menu,
+  );
+}
+
+class ShopDetail {
+  String id;
+  String shopId;
+  String name;
+  String lang;
+  String rating;
+  List<Menu> menus;
+
+  ShopDetail(
+    this.id,
+    this.shopId,
+    this.name,
+    this.lang,
+    this.rating,
+    this.menus,
   );
 }

@@ -25,11 +25,14 @@ class ApiClient {
     // return shops;
   }
 
-  Future<Shop> getShopDetail(langCode, shopId) async {
+  Future<ShopDetail> getShopDetail(langCode, shopId) async {
     Uri url = Uri.parse('$host:$port/$path/$langCode/shop/$shopId');
     final response = await get(url);
-    dynamic shop = jsonDecode(response.body);
-    return shop;
+    dynamic shopDetail = jsonDecode(response.body);
+
+    // test
+    print(url);
+    return shopDetail;
   }
 
   // TODO: need api
