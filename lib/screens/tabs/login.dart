@@ -78,98 +78,96 @@ class _SimpleLoginScreenState extends State<LoginTab> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ListView(
-        children: [
-          SizedBox(height: screenHeight * .12),
-          Text(
-            AppLocalizations.of(context)!.welcome,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        SizedBox(height: screenHeight * .1),
+        Text(
+          AppLocalizations.of(context)!.welcome,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
           ),
-          SizedBox(height: screenHeight * .01),
-          Text(
-            AppLocalizations.of(context)!.signincont,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
+        ),
+        SizedBox(height: screenHeight * .01),
+        Text(
+          AppLocalizations.of(context)!.signincont,
+          style: const TextStyle(
+            fontSize: 18,
+            color: Colors.grey,
           ),
-          SizedBox(height: screenHeight * .12),
-          InputField(
-            onChanged: (value) {
-              setState(() {
-                email = value;
-              });
-            },
-            labelText: 'Email',
-            errorText: emailError,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            autoFocus: true,
-          ),
-          SizedBox(height: screenHeight * .025),
-          InputField(
-            onChanged: (value) {
-              setState(() {
-                password = value;
-              });
-            },
-            onSubmitted: (val) => submit(),
-            labelText: 'Password',
-            errorText: passwordError,
-            obscureText: true,
-            textInputAction: TextInputAction.next,
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () {},
-              child: Text(
-                AppLocalizations.of(context)!.forgotpassword,
-                style: const TextStyle(
-                  color: Colors.grey,
-                ),
+        ),
+        SizedBox(height: screenHeight * .12),
+        InputField(
+          onChanged: (value) {
+            setState(() {
+              email = value;
+            });
+          },
+          labelText: 'Email',
+          errorText: emailError,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          autoFocus: true,
+        ),
+        SizedBox(height: screenHeight * .025),
+        InputField(
+          onChanged: (value) {
+            setState(() {
+              password = value;
+            });
+          },
+          onSubmitted: (val) => submit(),
+          labelText: 'Password',
+          errorText: passwordError,
+          obscureText: true,
+          textInputAction: TextInputAction.next,
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () {},
+            child: Text(
+              AppLocalizations.of(context)!.forgotpassword,
+              style: const TextStyle(
+                color: Colors.grey,
               ),
             ),
           ),
-          SizedBox(
-            height: screenHeight * .075,
-          ),
-          FormButton(
-            text: AppLocalizations.of(context)!.login,
-            onPressed: submit,
-          ),
-          SizedBox(
-            height: screenHeight * .15,
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                Home.of(context)?.onItemTapped(3);
-              });
-            },
-            child: RichText(
-              text: TextSpan(
-                text: AppLocalizations.of(context)!.newuser,
-                style: const TextStyle(color: Colors.grey),
-                children: [
-                  TextSpan(
-                    text: AppLocalizations.of(context)!.signup,
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    ),
+        ),
+        SizedBox(
+          height: screenHeight * .075,
+        ),
+        FormButton(
+          text: AppLocalizations.of(context)!.login,
+          onPressed: submit,
+        ),
+        SizedBox(
+          height: screenHeight * .15,
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              Home.of(context)?.onItemTapped(3);
+            });
+          },
+          child: RichText(
+            text: TextSpan(
+              text: AppLocalizations.of(context)!.newuser,
+              style: const TextStyle(color: Colors.grey),
+              children: [
+                TextSpan(
+                  text: AppLocalizations.of(context)!.signup,
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }

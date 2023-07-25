@@ -34,13 +34,13 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
     });
   }
 
-  CarouselSlider catagoryMenus() {
+  CarouselSlider _catagoryMenus() {
     return CarouselSlider.builder(
       itemCount: 10,
       options: CarouselOptions(
         autoPlay: false,
-        viewportFraction: 0.3,
-        height: 300,
+        viewportFraction: 0.6,
+        aspectRatio: 1 / 1,
         initialPage: 2,
       ),
       itemBuilder: (context, itemIndex, pageViewIndex) {
@@ -54,7 +54,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
             child: FillImageCard(
               borderRadius: 10.0,
               imageProvider: NetworkImage(
-                'https://dummyimage.com/200x200/ccc/fff.jpg&text=menu$i-image',
+                'https://dummyimage.com/300x300/ccc/fff.jpg&text=menu$i-image',
               ),
               title: Text(
                 'menu $i name',
@@ -109,6 +109,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
+      clipBehavior: Clip.hardEdge,
       child: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -118,18 +119,13 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
               ),
             ),
             pinned: true,
-            expandedHeight: 250.0,
+            expandedHeight: MediaQuery.of(context).size.height * .25,
             flexibleSpace: FlexibleSpaceBar(
-              background: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(10),
-                ),
-                child: Image.network(
-                  fit: BoxFit.fitWidth,
-                  'https://dummyimage.com/600x400/ccc/fff.jpg&text=stall-image',
-                ),
+              background: Image.network(
+                fit: BoxFit.fitWidth,
+                'https://dummyimage.com/600x400/ccc/fff.jpg&text=stall-image',
               ),
-              title: Text('name of shop id ${widget.shopId}'),
+              title: Text('name of ${widget.shopId}'),
             ),
             actions: [
               IconButton(
@@ -184,7 +180,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                catagoryMenus(),
+                _catagoryMenus(),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
@@ -192,7 +188,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                catagoryMenus(),
+                _catagoryMenus(),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
@@ -200,7 +196,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                catagoryMenus(),
+                _catagoryMenus(),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
@@ -208,7 +204,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                catagoryMenus(),
+                _catagoryMenus(),
               ],
             ),
           ),

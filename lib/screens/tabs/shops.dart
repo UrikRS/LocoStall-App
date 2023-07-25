@@ -37,7 +37,10 @@ class _ShopsTabState extends State<ShopsTab> {
     for (var shop in _shops) {
       Shops.add(
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 8,
+          ),
           child: GestureDetector(
             child: PhysicalModel(
               color: Colors.transparent,
@@ -51,7 +54,7 @@ class _ShopsTabState extends State<ShopsTab> {
                   Text('category 1'),
                   Text('category 2'),
                   Text('category 3'),
-                  Text('category 4')
+                  Text('category 4'),
                 ],
                 title: Text(
                   shop.name,
@@ -82,13 +85,10 @@ class _ShopsTabState extends State<ShopsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        itemCount: 1,
-        itemBuilder: _shopsListBuilder,
-      ),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      itemCount: 1,
+      itemBuilder: _shopsListBuilder,
     );
   }
 }

@@ -86,98 +86,96 @@ class _SimpleRegisterScreenState extends State<RegisterTab> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ListView(
-        children: [
-          SizedBox(height: screenHeight * .12),
-          Text(
-            AppLocalizations.of(context)!.createaccount,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        SizedBox(height: screenHeight * .1),
+        Text(
+          AppLocalizations.of(context)!.createaccount,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
           ),
-          SizedBox(height: screenHeight * .01),
-          Text(
-            AppLocalizations.of(context)!.signupcont,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
+        ),
+        SizedBox(height: screenHeight * .01),
+        Text(
+          AppLocalizations.of(context)!.signupcont,
+          style: const TextStyle(
+            fontSize: 18,
+            color: Colors.grey,
           ),
-          SizedBox(height: screenHeight * .12),
-          InputField(
-            onChanged: (value) {
-              setState(() {
-                email = value;
-              });
-            },
-            labelText: 'Email',
-            errorText: emailError,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            autoFocus: true,
-          ),
-          SizedBox(height: screenHeight * .025),
-          InputField(
-            onChanged: (value) {
-              setState(() {
-                password = value;
-              });
-            },
-            labelText: 'Password',
-            errorText: passwordError,
-            obscureText: true,
-            textInputAction: TextInputAction.next,
-          ),
-          SizedBox(height: screenHeight * .025),
-          InputField(
-            onChanged: (value) {
-              setState(() {
-                confirmPassword = value;
-              });
-            },
-            onSubmitted: (value) => submit(),
-            labelText: 'Confirm Password',
-            errorText: passwordError,
-            obscureText: true,
-            textInputAction: TextInputAction.done,
-          ),
-          SizedBox(
-            height: screenHeight * .075,
-          ),
-          FormButton(
-            text: AppLocalizations.of(context)!.signup,
-            onPressed: submit,
-          ),
-          SizedBox(
-            height: screenHeight * .125,
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                Home.of(context)?.onItemTapped(2);
-              });
-            },
-            child: RichText(
-              text: TextSpan(
-                text: "I'm already a member, ",
-                style: const TextStyle(color: Colors.grey),
-                children: [
-                  TextSpan(
-                    text: AppLocalizations.of(context)!.login,
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    ),
+        ),
+        SizedBox(height: screenHeight * .1),
+        InputField(
+          onChanged: (value) {
+            setState(() {
+              email = value;
+            });
+          },
+          labelText: 'Email',
+          errorText: emailError,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          autoFocus: true,
+        ),
+        SizedBox(height: screenHeight * .025),
+        InputField(
+          onChanged: (value) {
+            setState(() {
+              password = value;
+            });
+          },
+          labelText: 'Password',
+          errorText: passwordError,
+          obscureText: true,
+          textInputAction: TextInputAction.next,
+        ),
+        SizedBox(height: screenHeight * .025),
+        InputField(
+          onChanged: (value) {
+            setState(() {
+              confirmPassword = value;
+            });
+          },
+          onSubmitted: (value) => submit(),
+          labelText: 'Confirm Password',
+          errorText: passwordError,
+          obscureText: true,
+          textInputAction: TextInputAction.done,
+        ),
+        SizedBox(
+          height: screenHeight * .075,
+        ),
+        FormButton(
+          text: AppLocalizations.of(context)!.signup,
+          onPressed: submit,
+        ),
+        SizedBox(
+          height: screenHeight * .125,
+        ),
+        TextButton(
+          onPressed: () {
+            setState(() {
+              Home.of(context)?.onItemTapped(2);
+            });
+          },
+          child: RichText(
+            text: TextSpan(
+              text: "I'm already a member, ",
+              style: const TextStyle(color: Colors.grey),
+              children: [
+                TextSpan(
+                  text: AppLocalizations.of(context)!.login,
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }
