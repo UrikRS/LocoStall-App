@@ -10,8 +10,8 @@
     "signupcont": "Sign up to get started!",
     "forgotpassword": "Forgot Paassword",
     "newuser": "I'm a new user",
-    "login": "Log In",
-    "signup": "Sign Up",
+    "login": "ログイン",
+    "signup": "登録",
 	"settings" : "設定",
     "language": "言語"
 }

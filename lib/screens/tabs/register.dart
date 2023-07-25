@@ -5,6 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:locostall/screens/elements/input_field.dart';
 import 'package:locostall/screens/elements/form_button.dart';
 import 'package:locostall/screens/home.dart';
@@ -90,17 +91,17 @@ class _SimpleRegisterScreenState extends State<RegisterTab> {
       child: ListView(
         children: [
           SizedBox(height: screenHeight * .12),
-          const Text(
-            'Create Account,',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.createaccount,
+            style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: screenHeight * .01),
-          const Text(
-            'Sign up to get started!',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.signupcont,
+            style: const TextStyle(
               fontSize: 18,
               color: Colors.grey,
             ),
@@ -147,7 +148,7 @@ class _SimpleRegisterScreenState extends State<RegisterTab> {
             height: screenHeight * .075,
           ),
           FormButton(
-            text: 'Sign Up',
+            text: AppLocalizations.of(context)!.signup,
             onPressed: submit,
           ),
           SizedBox(
@@ -160,13 +161,13 @@ class _SimpleRegisterScreenState extends State<RegisterTab> {
               });
             },
             child: RichText(
-              text: const TextSpan(
+              text: TextSpan(
                 text: "I'm already a member, ",
-                style: TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
                 children: [
                   TextSpan(
-                    text: 'Sign In',
-                    style: TextStyle(
+                    text: AppLocalizations.of(context)!.login,
+                    style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                     ),

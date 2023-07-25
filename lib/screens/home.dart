@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    initCamera();
+    // initCamera();
   }
 
   Future<void> initCamera() async {

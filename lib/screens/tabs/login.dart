@@ -5,6 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:locostall/screens/home.dart';
 import 'package:locostall/screens/elements/input_field.dart';
 import 'package:locostall/screens/elements/form_button.dart';
@@ -82,17 +83,17 @@ class _SimpleLoginScreenState extends State<LoginTab> {
       child: ListView(
         children: [
           SizedBox(height: screenHeight * .12),
-          const Text(
-            'Welcome,',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.welcome,
+            style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: screenHeight * .01),
-          const Text(
-            'Sign in to continue!',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.signincont,
+            style: const TextStyle(
               fontSize: 18,
               color: Colors.grey,
             ),
@@ -127,9 +128,9 @@ class _SimpleLoginScreenState extends State<LoginTab> {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: () {},
-              child: const Text(
-                'Forgot Password?',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.forgotpassword,
+                style: const TextStyle(
                   color: Colors.grey,
                 ),
               ),
@@ -139,7 +140,7 @@ class _SimpleLoginScreenState extends State<LoginTab> {
             height: screenHeight * .075,
           ),
           FormButton(
-            text: 'Log In',
+            text: AppLocalizations.of(context)!.login,
             onPressed: submit,
           ),
           SizedBox(
@@ -152,13 +153,13 @@ class _SimpleLoginScreenState extends State<LoginTab> {
               });
             },
             child: RichText(
-              text: const TextSpan(
-                text: "I'm a new user, ",
-                style: TextStyle(color: Colors.grey),
+              text: TextSpan(
+                text: AppLocalizations.of(context)!.newuser,
+                style: const TextStyle(color: Colors.grey),
                 children: [
                   TextSpan(
-                    text: 'Sign Up',
-                    style: TextStyle(
+                    text: AppLocalizations.of(context)!.signup,
+                    style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                     ),
