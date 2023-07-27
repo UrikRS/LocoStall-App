@@ -52,24 +52,42 @@ class _TakePictureState extends State<TakePicture> {
     );
 
     return Scaffold(
-      body: Stack(children: [
+      body: Stack(children: <Widget>[
         SizedBox(
           height: double.infinity,
           child: CameraPreview(_controller),
-        )
+        ),
       ]),
-      floatingActionButton: FloatingActionButton(
-        heroTag: TakePicture,
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-            final image = await _controller.takePicture();
-            print('picture taked');
-          } catch (e) {
-            print(e);
-          }
-        },
-        child: const Icon(Icons.camera),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FloatingActionButton(
+              heroTag: 1,
+              mini: true,
+              onPressed: () {},
+              child: const Icon(Icons.photo_outlined),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FloatingActionButton(
+              heroTag: 2,
+              onPressed: () async {
+                try {
+                  await _initializeControllerFuture;
+                  final image = await _controller.takePicture();
+                  print('picture taked');
+                } catch (e) {
+                  print(e);
+                }
+              },
+              child: const Icon(Icons.camera),
+            ),
+          ),
+        ],
       ),
     );
   }

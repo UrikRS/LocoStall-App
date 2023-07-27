@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
+import 'package:locostall/models/menu.dart';
 import 'package:locostall/models/shop.dart';
 import 'package:locostall/models/user.dart';
 
@@ -10,29 +11,61 @@ class ApiClient {
   String path = 'api';
 
   Future<List<Shop>> getShops(langCode) async {
+    if (langCode == 'ja') {
+      langCode = 'jp';
+    }
     Uri url = Uri.parse('$host:$port/$path/$langCode/shops');
-    // final response = await get(url);
-    // dynamic shops = jsonDecode(response.body);
-
-    // test
-    print(url);
-    return [
-      Shop('111', 'en', 'shop name 1', 'aaa'),
-      Shop('222', 'en', 'shop name 2', 'bbb'),
-      Shop('333', 'en', 'shop name 3', 'ccc'),
-      Shop('444', 'en', 'shop name 4', 'ddd'),
-    ];
-    // return shops;
+    try {
+      final response = await get(url);
+      List<dynamic> shops_ = jsonDecode(response.body);
+      List<Shop> shops = [];
+      for (dynamic shop_ in shops_) {
+        Shop shop = Shop(
+          shop_['id'],
+          shop_['lang'],
+          shop_['name'],
+          shop_['shop_id'],
+          shop_['description'],
+        );
+        shops.add(shop);
+      }
+      return shops;
+    } catch (e) {
+      return [];
+    }
   }
 
   Future<ShopDetail> getShopDetail(langCode, shopId) async {
+    if (langCode == 'ja') {
+      langCode = 'jp';
+    }
     Uri url = Uri.parse('$host:$port/$path/$langCode/shop/$shopId');
-    final response = await get(url);
-    dynamic shopDetail = jsonDecode(response.body);
-
-    // test
-    print(url);
-    return shopDetail;
+    try {
+      final response = await get(url);
+      dynamic shopDetail_ = jsonDecode(response.body);
+      List<dynamic> menus_ = shopDetail_['menu'];
+      List<Menu> menus = [];
+      for (dynamic menu_ in menus_) {
+        Menu menu = Menu(
+          menu_['id'],
+          menu_['name'],
+          menu_['description'],
+          menu_['price'],
+        );
+        menus.add(menu);
+      }
+      ShopDetail shopDetail = ShopDetail(
+        shopDetail_['id'],
+        shopDetail_['shop_id'],
+        shopDetail_['name'],
+        shopDetail_['lang'],
+        shopDetail_['rating'],
+        menus,
+      );
+      return shopDetail;
+    } catch (e) {
+      return ShopDetail(0, 0, 'Unknown', langCode, 0, []);
+    }
   }
 
   // TODO: need api

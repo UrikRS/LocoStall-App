@@ -1,26 +1,28 @@
 import 'package:locostall/models/menu.dart';
 
 class Shop {
-  String id;
-  String lang;
-  String name;
-  String shopId;
+  final int id;
+  final String lang;
+  final String name;
+  final int shopId;
+  final dynamic description;
 
   Shop(
     this.id,
     this.lang,
     this.name,
     this.shopId,
+    this.description,
   );
 }
 
 class ShopDetail {
-  String id;
-  String shopId;
-  String name;
-  String lang;
-  String rating;
-  List<Menu> menus;
+  final int id;
+  final int shopId;
+  final String name;
+  final String lang;
+  final int rating;
+  final List<Menu>? menus;
 
   ShopDetail(
     this.id,

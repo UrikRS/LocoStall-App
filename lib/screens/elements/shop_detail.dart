@@ -1,110 +1,51 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_card/image_card.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:image_card/image_card.dart';
+import 'package:locostall/bloc/drawer_bloc.dart';
+import 'package:locostall/bloc/cart_bloc.dart';
 import 'package:locostall/models/shop.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:locostall/services/api.dart';
 
 class ShopDetailDialog extends StatefulWidget {
   const ShopDetailDialog({super.key, required this.shopId});
-  final String shopId;
+  final dynamic shopId;
 
   @override
   State<ShopDetailDialog> createState() => _ShopDetailDialogState();
 }
 
 class _ShopDetailDialogState extends State<ShopDetailDialog> {
-  // late ShopDetail _shopDetail;
+  ShopDetail? shopDetail;
 
   @override
   void initState() {
     super.initState();
-    // _setData();
+    _setData();
   }
 
   Future<void> _setData() async {
     final prefs = await SharedPreferences.getInstance();
     ApiClient apiClient = ApiClient();
     String langCode = prefs.getString('langCode') ?? 'en';
-    ShopDetail shopDetail =
+    ShopDetail shopDetail_ =
         await apiClient.getShopDetail(langCode, widget.shopId);
-    setState(() {
-      // _shopDetail = shopDetail;
-    });
-  }
-
-  CarouselSlider _catagoryMenus() {
-    return CarouselSlider.builder(
-      itemCount: 10,
-      options: CarouselOptions(
-        autoPlay: false,
-        viewportFraction: 0.6,
-        aspectRatio: 1 / 1,
-        initialPage: 2,
-      ),
-      itemBuilder: (context, itemIndex, pageViewIndex) {
-        String i = itemIndex.toString();
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: PhysicalModel(
-            color: Colors.transparent,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            elevation: 3.0,
-            child: FillImageCard(
-              borderRadius: 10.0,
-              imageProvider: NetworkImage(
-                'https://dummyimage.com/300x300/ccc/fff.jpg&text=menu$i-image',
-              ),
-              title: Text(
-                'menu $i name',
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-              description: Text('menu $i description'),
-              footer: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.remove,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        print('$i-');
-                      },
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                    child: Text('0'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.add,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        print('$i+');
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    if (mounted) {
+      setState(() {
+        shopDetail = shopDetail_;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final drawerBloc = BlocProvider.of<DrawerBloc>(context);
+    final cartBloc = BlocProvider.of<CartBloc>(context);
+    _setData();
+
     return Dialog(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -125,12 +66,26 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                 fit: BoxFit.fitWidth,
                 'https://dummyimage.com/600x400/ccc/fff.jpg&text=stall-image',
               ),
-              title: Text('name of ${widget.shopId}'),
+              title: Text(shopDetail?.name ?? 'Unknown'),
             ),
             actions: [
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.shopping_cart_outlined),
+                onPressed: () {
+                  drawerBloc.add(ItemTappedEvent(TabPage.orders));
+                  Navigator.pop(context);
+                },
+                icon: badges.Badge(
+                  position: badges.BadgePosition.bottomStart(),
+                  badgeContent: Text(
+                    cartBloc.state.cartItems.length.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                  ),
+                  child: const Icon(Icons.shopping_cart_outlined),
+                ),
               ),
             ],
           ),
@@ -141,8 +96,8 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                   padding: const EdgeInsets.all(8.0),
                   child: RatingBar.builder(
                     itemSize: 30,
-                    initialRating: 3,
-                    minRating: 1,
+                    initialRating: shopDetail?.rating.toDouble() ?? 2.5,
+                    ignoreGestures: true,
                     allowHalfRating: true,
                     itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                     unratedColor: Colors.amber[100],
@@ -150,9 +105,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                       Icons.star,
                       color: Colors.amber,
                     ),
-                    onRatingUpdate: (rating) {
-                      print(rating);
-                    },
+                    onRatingUpdate: (rating) {},
                   ),
                 ),
                 SizedBox(
@@ -180,35 +133,134 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                _catagoryMenus(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'catagory 2',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                _catagoryMenus(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'catagory 3',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                _catagoryMenus(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'catagory 4',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                _catagoryMenus(),
+                MenusCarousel(shopDetail: shopDetail, context: context),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class MenusCarousel extends StatelessWidget {
+  const MenusCarousel({
+    super.key,
+    required this.shopDetail,
+    required this.context,
+  });
+
+  final ShopDetail? shopDetail;
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext context) {
+    final menus = shopDetail?.menus;
+
+    return CarouselSlider.builder(
+      itemCount: menus?.length ?? 0,
+      options: CarouselOptions(
+        disableCenter: true,
+        autoPlay: false,
+        viewportFraction: 0.6,
+        aspectRatio: 8 / 7,
+        enableInfiniteScroll: false,
+      ),
+      itemBuilder: (context, itemIndex, pageViewIndex) =>
+          MenuItemCard(itemIndex: itemIndex, shopDetail: shopDetail),
+    );
+  }
+}
+
+class MenuItemCard extends StatelessWidget {
+  const MenuItemCard({
+    super.key,
+    required this.itemIndex,
+    required this.shopDetail,
+  });
+
+  final int itemIndex;
+  final ShopDetail? shopDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    final menuItem = shopDetail!.menus?[itemIndex];
+    final cartBloc = BlocProvider.of<CartBloc>(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: PhysicalModel(
+        color: Colors.transparent,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        elevation: 3.0,
+        child: FillImageCard(
+          heightImage: 150,
+          borderRadius: 10.0,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+          imageProvider: NetworkImage(
+            'https://dummyimage.com/300x240/ccc/fff.jpg&text=menu$itemIndex-image',
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                menuItem?.name ?? 'Unknown',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                'NT ${menuItem?.price}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            ],
+          ),
+          description: SizedBox(
+            height: 40,
+            child: Text(
+              menuItem?.description ?? 'Unknown',
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+          footer: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.remove,
+                  size: 18,
+                ),
+                onPressed: () =>
+                    cartBloc.add(RemoveFromCartEvent(menuItem!.id)),
+              ),
+              Text(
+                cartBloc.state.cartItems
+                    .where((item) => item == menuItem!.id)
+                    .length
+                    .toString(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.add,
+                  size: 18,
+                ),
+                onPressed: () => cartBloc.add(AddToCartEvent(menuItem!.id)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

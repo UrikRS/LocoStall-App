@@ -2,6 +2,7 @@
 	"@@local" : "zh",
 	"camera" : "拍照",
 	"stalls" : "攤販",
+	"orders" : "訂單",
 	"other" : "其他",
     "logreg": "登入/註冊",
     "welcome": "歡迎,",

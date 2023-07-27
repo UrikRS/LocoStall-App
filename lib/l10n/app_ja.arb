@@ -2,6 +2,7 @@
 	"@@local" : "ja",
 	"camera" : "カメラ",
 	"stalls" : "ストール",
+	"orders" : "注文",
 	"other" : "その他",
     "logreg": "ログイン/登録",
     "welcome": "Welcome,",

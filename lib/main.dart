@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:locostall/bloc/cart_bloc.dart';
+import 'package:locostall/bloc/drawer_bloc.dart';
 import 'package:locostall/screens/home.dart';
 import 'package:locostall/services/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-Widget languageWrap(langCode, context, Widget w) {
-  return Localizations.override(
-    context: context,
-    locale: Locale(langCode),
-    child: Builder(
-      builder: (context) {
-        return w;
-      },
-    ),
-  );
-}
 
 void main() => runApp(const MyApp());
 
@@ -52,29 +43,39 @@ class _MyAppState extends State<MyApp> {
     _loadLangCode();
     setLocale(Locale(_langCode));
 
-    return MaterialApp(
-      title: 'LocoStall',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      // darkTheme: ThemeData.dark(),
-      locale: locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('ja'),
-        Locale('en'),
-        Locale.fromSubtags(
-          languageCode: 'zh',
-          scriptCode: 'Hant',
-          countryCode: 'TW',
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => DrawerBloc(),
+        ),
+        BlocProvider(
+          create: (context) => CartBloc(),
         ),
       ],
-      home: const Home(),
+      child: MaterialApp(
+        title: 'LocoStall',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        // darkTheme: ThemeData.dark(),
+        locale: locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('ja'),
+          Locale('en'),
+          Locale.fromSubtags(
+            languageCode: 'zh',
+            scriptCode: 'Hant',
+            countryCode: 'TW',
+          ),
+        ],
+        home: const Home(),
+      ),
     );
   }
 }

@@ -26,16 +26,19 @@ class _ShopsTabState extends State<ShopsTab> {
     ApiClient apiClient = ApiClient();
     String langCode = prefs.getString('langCode') ?? 'en';
     List<Shop> shops = await apiClient.getShops(langCode);
-    setState(() {
-      _shops = shops;
-    });
+    if (mounted) {
+      setState(() {
+        _shops = shops;
+      });
+    }
   }
 
   Widget _shopsListBuilder(BuildContext context, int index) {
-    List<Widget> Shops = [];
+    List<Widget> shops = [];
+    _setData();
 
-    for (var shop in _shops) {
-      Shops.add(
+    for (Shop shop in _shops) {
+      shops.add(
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
@@ -62,7 +65,7 @@ class _ShopsTabState extends State<ShopsTab> {
                     fontSize: 30,
                   ),
                 ),
-                description: Text('${shop.name} description'),
+                description: Text(shop.description),
                 footer: Text('${shop.name} footer'),
                 imageProvider: const NetworkImage(
                   'https://dummyimage.com/600x400/ccc/fff.jpg&text=stall-image',
@@ -79,7 +82,7 @@ class _ShopsTabState extends State<ShopsTab> {
     }
 
     return Column(
-      children: Shops,
+      children: shops,
     );
   }
 

@@ -10,6 +10,11 @@
         "type": "text",
         "context": "Stalls"
     },
+    "orders": "Orders",
+    "@orders": {
+        "type": "text",
+        "context": "Orders"
+    },
     "other": "Other",
     "@other": {
         "type": "text",

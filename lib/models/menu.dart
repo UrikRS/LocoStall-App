@@ -1,8 +1,8 @@
 class Menu {
-  String id;
-  String name;
-  String description;
-  String price;
+  final int id;
+  final String name;
+  final String description;
+  final int price;
 
   Menu(
     this.id,

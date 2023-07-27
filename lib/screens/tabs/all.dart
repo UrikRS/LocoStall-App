@@ -1,5 +1,5 @@
-export 'login.dart';
-export 'other.dart';
-export 'register.dart';
 export 'shops.dart';
+export 'orders.dart';
+export 'login.dart';
+export 'register.dart';
 export 'settings.dart';

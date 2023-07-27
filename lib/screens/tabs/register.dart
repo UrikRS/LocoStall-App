@@ -5,10 +5,11 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:locostall/screens/elements/input_field.dart';
 import 'package:locostall/screens/elements/form_button.dart';
-import 'package:locostall/screens/home.dart';
+import 'package:locostall/bloc/drawer_bloc.dart';
 
 class RegisterTab extends StatefulWidget {
   /// Callback for when this form is submitted successfully. Parameters are (email, password)
@@ -84,6 +85,7 @@ class _SimpleRegisterScreenState extends State<RegisterTab> {
 
   @override
   Widget build(BuildContext context) {
+    final drawerBloc = BlocProvider.of<DrawerBloc>(context);
     double screenHeight = MediaQuery.of(context).size.height;
 
     return ListView(
@@ -156,7 +158,7 @@ class _SimpleRegisterScreenState extends State<RegisterTab> {
         TextButton(
           onPressed: () {
             setState(() {
-              Home.of(context)?.onItemTapped(2);
+              drawerBloc.add(ItemTappedEvent(TabPage.login));
             });
           },
           child: RichText(
