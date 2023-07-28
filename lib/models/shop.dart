@@ -32,4 +32,12 @@ class ShopDetail {
     this.rating,
     this.menus,
   );
+
+  Menu? findMenuById(int menuId) {
+    for (Menu menu in menus!) {
+      if (menu.id == menuId) {
+        return menu;
+      }
+    }
+  }
 }

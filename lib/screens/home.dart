@@ -89,7 +89,7 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.shopping_cart_outlined),
+              leading: const Icon(Icons.ramen_dining_outlined),
               title: Text(AppLocalizations.of(context)!.orders),
               selected: drawerBloc.state.tab == TabPage.orders,
               onTap: () {

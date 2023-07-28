@@ -53,6 +53,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'LocoStall',
         theme: ThemeData(
           primarySwatch: Colors.blue,

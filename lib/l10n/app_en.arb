@@ -70,9 +70,9 @@
         "type": "text",
         "context": "Settings"
     },
-    "language": "Language",
+    "language": "LANGUAGE",
     "@language": {
         "type": "text",
-        "context": "Language"
+        "context": "LANGUAGE"
     }
 }

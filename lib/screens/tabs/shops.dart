@@ -57,7 +57,6 @@ class _ShopsTabState extends State<ShopsTab> {
                   Text('category 1'),
                   Text('category 2'),
                   Text('category 3'),
-                  Text('category 4'),
                 ],
                 title: Text(
                   shop.name,
@@ -81,9 +80,7 @@ class _ShopsTabState extends State<ShopsTab> {
       );
     }
 
-    return Column(
-      children: shops,
-    );
+    return Column(children: shops);
   }
 
   @override

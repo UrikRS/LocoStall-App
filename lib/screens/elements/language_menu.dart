@@ -89,9 +89,18 @@ class _LangMenuState extends State<LangMenu> {
             Icons.translate,
             color: Colors.white,
           ),
-          label: Text(
-            widget.iconButtonTitle,
-            style: const TextStyle(color: Colors.white),
+          label: Row(
+            children: [
+              Text(
+                widget.iconButtonTitle,
+                style: const TextStyle(color: Colors.white),
+              ),
+              const Icon(
+                Icons.keyboard_arrow_down,
+                size: 20,
+                color: Colors.white,
+              )
+            ],
           ),
         );
       },

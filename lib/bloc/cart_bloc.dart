@@ -15,6 +15,8 @@ class RemoveFromCartEvent extends CartEvent {
   RemoveFromCartEvent(this.menuId);
 }
 
+class EmptyCartEvent extends CartEvent {}
+
 // 2. Define the state
 class CartState {
   final List<int> cartItems;
@@ -29,11 +31,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.cartItems.add(event.menuId);
       emit(CartState(state.cartItems));
     });
+
     on<RemoveFromCartEvent>((event, emit) {
       if (state.cartItems.contains(event.menuId)) {
         state.cartItems.remove(event.menuId);
       }
       emit(CartState(state.cartItems));
     });
+
+    on<EmptyCartEvent>((event, emit) => emit(CartState([])));
   }
 }
