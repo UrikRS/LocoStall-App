@@ -39,5 +39,6 @@ class ShopDetail {
         return menu;
       }
     }
+    return null;
   }
 }

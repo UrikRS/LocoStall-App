@@ -6,17 +6,15 @@ class Order {
 }
 
 class OrderList {
-  final DateTime createAt;
-  final int id;
+  final String createAt;
   final List<Order> orderList;
   final String payment;
   final int shopId;
-  final DateTime updateAt;
+  final String updateAt;
   final int userId;
 
   OrderList(
     this.createAt,
-    this.id,
     this.orderList,
     this.payment,
     this.shopId,

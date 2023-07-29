@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:locostall/models/menu.dart';
+import 'package:locostall/models/order.dart';
 import 'package:locostall/models/shop.dart';
 import 'package:locostall/models/user.dart';
 
@@ -64,8 +65,13 @@ class ApiClient {
       );
       return shopDetail;
     } catch (e) {
-      return ShopDetail(0, 0, 'Unknown', langCode, 0, []);
+      return ShopDetail(0, 0, 'UNKNOWN', langCode, 0, []);
     }
+  }
+
+  Future<void> postOrder(OrderList orderList) async {
+    Uri url = Uri.parse('$host:$port/$path/order');
+    await post(url, body: jsonEncode(orderList));
   }
 
   // TODO: need api

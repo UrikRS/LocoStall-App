@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locostall/bloc/cart_bloc.dart';
 import 'package:locostall/bloc/drawer_bloc.dart';
+import 'package:locostall/bloc/order_bloc.dart';
 import 'package:locostall/models/menu.dart';
+import 'package:locostall/models/order.dart';
 import 'package:locostall/models/shop.dart';
 import 'package:sks_ticket_view/sks_ticket_view.dart';
 
@@ -13,7 +15,7 @@ class Checkout extends StatefulWidget {
     required this.shopDetail,
   });
 
-  final ShopDetail? shopDetail;
+  final ShopDetail shopDetail;
 
   @override
   State<Checkout> createState() => _CheckoutState();
@@ -25,13 +27,36 @@ class _CheckoutState extends State<Checkout> {
   @override
   void initState() {
     super.initState();
+
     now = DateTime.now().toString();
+    final cartBloc = BlocProvider.of<CartBloc>(context);
+    final orderBloc = BlocProvider.of<OrderBloc>(context);
+
+    List<Order> orders = cartBloc.getOrdersFromCart();
+
+    OrderList orderList = OrderList(
+      now,
+      orders,
+      'cash',
+      widget.shopDetail.id,
+      now,
+      0,
+    );
+    orderBloc.add(CreateOrderEvent(orderList));
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    final orderBloc = BlocProvider.of<OrderBloc>(context);
+    orderBloc.add(CancelOrderEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     final drawerBloc = BlocProvider.of<DrawerBloc>(context);
     final cartBloc = BlocProvider.of<CartBloc>(context);
+    final orderBloc = BlocProvider.of<OrderBloc>(context);
 
     return FluidDialog(
       defaultDecoration: const BoxDecoration(color: Colors.transparent),
@@ -57,7 +82,7 @@ class _CheckoutState extends State<Checkout> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        widget.shopDetail!.name,
+                        widget.shopDetail.name,
                         style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -95,7 +120,7 @@ class _CheckoutState extends State<Checkout> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Text(
-                              'NT ${cartBloc.state.cartItems.fold(0, (sum, item) => sum + widget.shopDetail!.findMenuById(item)!.price)}'),
+                              'NT ${cartBloc.state.cartItems.fold(0, (sum, item) => sum + widget.shopDetail.findMenuById(item)!.price)}'),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -108,7 +133,6 @@ class _CheckoutState extends State<Checkout> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('PAYMENT'),
-                          Text('sign : '),
                           Text('user name'),
                         ],
                       ),
@@ -117,9 +141,6 @@ class _CheckoutState extends State<Checkout> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
                             child: Text(
                               'CANCEL',
                               style: TextStyle(
@@ -127,13 +148,11 @@ class _CheckoutState extends State<Checkout> {
                                 fontSize: 20,
                               ),
                             ),
-                          ),
-                          TextButton(
                             onPressed: () {
-                              drawerBloc.add(ItemTappedEvent(TabPage.orders));
-                              Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },
+                          ),
+                          TextButton(
                             child: Text(
                               'LINE PAY',
                               style: TextStyle(
@@ -141,13 +160,17 @@ class _CheckoutState extends State<Checkout> {
                                 fontSize: 20,
                               ),
                             ),
-                          ),
-                          TextButton(
                             onPressed: () {
+                              orderBloc
+                                  .add(UpdateOrderEvent(payment: 'linepay'));
+                              orderBloc.add(SubmitOrderEvent(
+                                  orderBloc.state.unsubmitted!));
                               drawerBloc.add(ItemTappedEvent(TabPage.orders));
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },
+                          ),
+                          TextButton(
                             child: Text(
                               'CASH',
                               style: TextStyle(
@@ -155,6 +178,13 @@ class _CheckoutState extends State<Checkout> {
                                 fontSize: 20,
                               ),
                             ),
+                            onPressed: () {
+                              orderBloc.add(SubmitOrderEvent(
+                                  orderBloc.state.unsubmitted!));
+                              drawerBloc.add(ItemTappedEvent(TabPage.orders));
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
                           ),
                         ],
                       ),
@@ -183,7 +213,7 @@ class OrderTable extends StatefulWidget {
 }
 
 class _OrderTableState extends State<OrderTable> {
-  List<TableRow> _orderRows(CartBloc cartBloc) {
+  List<TableRow> _orderRows(CartBloc cartBloc, OrderBloc orderBloc) {
     List<TableRow> rows = [];
 
     rows.add(const TableRow(
@@ -242,7 +272,11 @@ class _OrderTableState extends State<OrderTable> {
                     Icons.remove,
                     color: Colors.black,
                   ),
-                  onPressed: () => cartBloc.add(RemoveFromCartEvent(menuId)),
+                  onPressed: () {
+                    cartBloc.add(RemoveFromCartEvent(menuId));
+                    List<Order> orders = cartBloc.getOrdersFromCart();
+                    orderBloc.add(UpdateOrderEvent(orderList: orders));
+                  },
                 ),
                 Text(
                   cartBloc.state.cartItems
@@ -257,7 +291,11 @@ class _OrderTableState extends State<OrderTable> {
                     Icons.add,
                     color: Colors.black,
                   ),
-                  onPressed: () => cartBloc.add(AddToCartEvent(menuId)),
+                  onPressed: () {
+                    cartBloc.add(AddToCartEvent(menuId));
+                    List<Order> orders = cartBloc.getOrdersFromCart();
+                    orderBloc.add(UpdateOrderEvent(orderList: orders));
+                  },
                 ),
               ],
             ),
@@ -286,6 +324,7 @@ class _OrderTableState extends State<OrderTable> {
   @override
   Widget build(BuildContext context) {
     final cartBloc = BlocProvider.of<CartBloc>(context);
+    final orderBloc = BlocProvider.of<OrderBloc>(context);
 
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -294,7 +333,7 @@ class _OrderTableState extends State<OrderTable> {
         1: FlexColumnWidth(.4),
         2: FlexColumnWidth(.2),
       },
-      children: _orderRows(cartBloc),
+      children: _orderRows(cartBloc, orderBloc),
     );
   }
 }

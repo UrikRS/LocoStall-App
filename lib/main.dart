@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:locostall/bloc/cart_bloc.dart';
 import 'package:locostall/bloc/drawer_bloc.dart';
+import 'package:locostall/bloc/order_bloc.dart';
 import 'package:locostall/screens/home.dart';
 import 'package:locostall/services/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +51,9 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider(
           create: (context) => CartBloc(),
+        ),
+        BlocProvider(
+          create: (context) => OrderBloc(),
         ),
       ],
       child: MaterialApp(

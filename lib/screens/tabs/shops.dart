@@ -35,7 +35,6 @@ class _ShopsTabState extends State<ShopsTab> {
 
   Widget _shopsListBuilder(BuildContext context, int index) {
     List<Widget> shops = [];
-    _setData();
 
     for (Shop shop in _shops) {
       shops.add(
@@ -51,24 +50,27 @@ class _ShopsTabState extends State<ShopsTab> {
               elevation: 3.0,
               child: TransparentImageCard(
                 width: double.infinity,
-                endColor: Colors.white30,
+                endColor: Colors.black45,
                 borderRadius: 10.0,
-                tags: const [
-                  Text('category 1'),
-                  Text('category 2'),
-                  Text('category 3'),
-                ],
+                imageProvider:
+                    AssetImage('lib/assets/shops/${shop.shopId}.jpg'),
+                // tags: const [
+                //   Text('category 1'),
+                //   Text('category 2'),
+                //   Text('category 3'),
+                // ],
                 title: Text(
                   shop.name,
-                  style: const TextStyle(
-                    fontSize: 30,
-                  ),
+                  style: const TextStyle(fontSize: 30, color: Colors.white),
                 ),
-                description: Text(shop.description),
-                footer: Text('${shop.name} footer'),
-                imageProvider: const NetworkImage(
-                  'https://dummyimage.com/600x400/ccc/fff.jpg&text=stall-image',
+                description: Text(
+                  shop.description,
+                  style: const TextStyle(color: Colors.white),
                 ),
+                // footer: Text(
+                //   '${shop.name} footer',
+                //   style: const TextStyle(color: Colors.white),
+                // ),
               ),
             ),
             onTap: () => showDialog(
@@ -85,6 +87,7 @@ class _ShopsTabState extends State<ShopsTab> {
 
   @override
   Widget build(BuildContext context) {
+    _setData();
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 12),
       itemCount: 1,

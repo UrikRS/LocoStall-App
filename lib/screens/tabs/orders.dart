@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:locostall/bloc/cart_bloc.dart';
-import 'package:sks_ticket_view/sks_ticket_view.dart';
+// import 'package:locostall/bloc/cart_bloc.dart';
+import 'package:locostall/bloc/order_bloc.dart';
 
 class OrdersTab extends StatelessWidget {
   const OrdersTab({super.key});
@@ -9,7 +9,10 @@ class OrdersTab extends StatelessWidget {
   Widget? _orderListBuilder(BuildContext context, int index) {
     List<Widget> orders = [];
 
-    final cartBloc = BlocProvider.of<CartBloc>(context);
+    // final cartBloc = BlocProvider.of<CartBloc>(context);
+    final orderBloc = BlocProvider.of<OrderBloc>(context);
+
+    orders.add(Text('${orderBloc.state.submitted}'));
 
     return Column(children: orders);
   }

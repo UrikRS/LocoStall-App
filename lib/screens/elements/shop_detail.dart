@@ -65,11 +65,11 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                 pinned: true,
                 expandedHeight: MediaQuery.of(context).size.height * .25,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Image.network(
+                  background: Image.asset(
+                    'lib/assets/shops/${shopDetail?.shopId ?? 1}.jpg',
                     fit: BoxFit.fitWidth,
-                    'https://dummyimage.com/600x400/ccc/fff.jpg&text=stall-image',
                   ),
-                  title: Text(shopDetail?.name ?? 'Unknown'),
+                  title: Text(shopDetail?.name ?? 'UNKNOWN'),
                 ),
                 actions: [OrderButton(shopDetail: shopDetail)],
               ),
@@ -104,21 +104,27 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    const Align(
+                      alignment: Alignment.center,
                       child: Text(
-                        'menus of shop id ${widget.shopId}',
-                        style: const TextStyle(fontSize: 25),
+                        'MENU',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 5,
+                        ),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'catagory 1',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
+                    // const Padding(
+                    //   padding: EdgeInsets.all(8.0),
+                    //   child: Text(
+                    //     'catagory 1',
+                    //     style: TextStyle(fontSize: 20),
+                    //   ),
+                    // ),
+                    const SizedBox(height: 20),
                     MenusCarousel(shopDetail: shopDetail, context: context),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -145,10 +151,10 @@ class OrderButton extends StatelessWidget {
       onPressed: () {
         showDialog(
             context: context,
-            builder: (context) => Checkout(shopDetail: shopDetail));
+            builder: (context) => Checkout(shopDetail: shopDetail!));
       },
       label: Text(
-        AppLocalizations.of(context)?.orders ?? 'ORDERS',
+        AppLocalizations.of(context)?.order ?? 'ORDER',
         style: const TextStyle(
           color: Colors.white,
           shadows: [Shadow(color: Colors.black45, offset: Offset(1, 1))],
@@ -224,74 +230,76 @@ class MenuItemCard extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         elevation: 3.0,
-        child: FillImageCard(
-          heightImage: 150,
-          borderRadius: 10.0,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-          imageProvider: NetworkImage(
-            'https://dummyimage.com/300x240/ccc/fff.jpg&text=menu$itemIndex-image',
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                menuItem?.name ?? 'Unknown',
-                style: const TextStyle(
-                  fontSize: 16,
+        child: LayoutBuilder(builder: (context, constraints) {
+          return FillImageCard(
+            heightImage: constraints.maxHeight * .6,
+            borderRadius: 10.0,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            imageProvider: NetworkImage(
+              'https://dummyimage.com/300x240/ccc/fff.jpg&text=menu$itemIndex-image',
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  menuItem!.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              Text(
-                'NT ${menuItem?.price}',
+                Text(
+                  'NT ${menuItem.price}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            description: SizedBox(
+              height: constraints.maxHeight * .2,
+              child: Text(
+                menuItem.description,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: Colors.black54,
                 ),
-              )
-            ],
-          ),
-          description: SizedBox(
-            height: 40,
-            child: Text(
-              menuItem?.description ?? 'Unknown',
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
               ),
             ),
-          ),
-          footer: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.remove,
-                  size: 18,
+            footer: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.remove,
+                    size: 18,
+                  ),
+                  onPressed: () =>
+                      cartBloc.add(RemoveFromCartEvent(menuItem.id)),
                 ),
-                onPressed: () =>
-                    cartBloc.add(RemoveFromCartEvent(menuItem!.id)),
-              ),
-              Text(
-                cartBloc.state.cartItems
-                    .where((item) => item == menuItem!.id)
-                    .length
-                    .toString(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
+                Text(
+                  cartBloc.state.cartItems
+                      .where((item) => item == menuItem.id)
+                      .length
+                      .toString(),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.add,
-                  size: 18,
+                IconButton(
+                  icon: const Icon(
+                    Icons.add,
+                    size: 18,
+                  ),
+                  onPressed: () => cartBloc.add(AddToCartEvent(menuItem.id)),
                 ),
-                onPressed: () => cartBloc.add(AddToCartEvent(menuItem!.id)),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
