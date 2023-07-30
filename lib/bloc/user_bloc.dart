@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:locostall/models/user.dart';
 
-// 1. Define the events
+/* events */
 class UserEvent {}
 
 class LoginEvent extends UserEvent {
@@ -12,14 +12,14 @@ class LoginEvent extends UserEvent {
 
 class LogoutEvent extends UserEvent {}
 
-// 2. Define the state
+/* states */
 class UserState {
   final User? user;
 
   UserState(this.user);
 }
 
-// 3. Create the BLoC class
+/* BLoC */
 class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc() : super(UserState(null)) {
     on<LoginEvent>((event, emit) => emit(UserState(event.user)));

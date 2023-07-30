@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:locostall/models/order.dart';
 
-// 1. Define the events
+/* events */
 class OrderEvent {}
 
 class CreateOrderEvent extends OrderEvent {
@@ -28,27 +28,23 @@ class UpdateOrderEvent extends OrderEvent {
   });
 }
 
-class SubmitOrderEvent extends OrderEvent {
-  final OrderList orders;
-
-  SubmitOrderEvent(this.orders);
-}
+class SubmitOrderEvent extends OrderEvent {}
 
 class CancelOrderEvent extends OrderEvent {}
 
 class GetUserOrdersEvent extends OrderEvent {}
 
-// 2. Define the state
+/* states */
 class OrderState {
-  final OrderList? unsubmitted;
+  final OrderList unsubmitted;
   final List<OrderList> submitted;
 
   OrderState(this.unsubmitted, this.submitted);
 }
 
-// 3. Create the BLoC class
+/* BLoC */
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
-  OrderBloc() : super(OrderState(null, [])) {
+  OrderBloc() : super(OrderState(OrderList(), [])) {
     on<CreateOrderEvent>(
         (event, emit) => emit(OrderState(event.orders, state.submitted)));
 
@@ -56,23 +52,23 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       (event, emit) => emit(
         OrderState(
             OrderList(
-              event.createAt ?? state.unsubmitted!.createAt,
-              event.orderList ?? state.unsubmitted!.orderList,
-              event.payment ?? state.unsubmitted!.payment,
-              event.shopId ?? state.unsubmitted!.shopId,
-              event.updateAt ?? state.unsubmitted!.updateAt,
-              event.userId ?? state.unsubmitted!.userId,
+              createAt: event.createAt ?? state.unsubmitted.createAt,
+              orderList: event.orderList ?? state.unsubmitted.orderList,
+              payment: event.payment ?? state.unsubmitted.payment,
+              shopId: event.shopId ?? state.unsubmitted.shopId,
+              updateAt: event.updateAt ?? state.unsubmitted.updateAt,
+              userId: event.userId ?? state.unsubmitted.userId,
             ),
             state.submitted),
       ),
     );
 
     on<SubmitOrderEvent>((event, emit) {
-      state.submitted.add(event.orders);
-      emit(OrderState(null, state.submitted));
+      state.submitted.add(state.unsubmitted);
+      emit(OrderState(OrderList(), state.submitted));
     });
 
     on<CancelOrderEvent>(
-        (event, emit) => emit(OrderState(null, state.submitted)));
+        (event, emit) => emit(OrderState(OrderList(), state.submitted)));
   }
 }

@@ -32,17 +32,15 @@ class _CheckoutState extends State<Checkout> {
     final cartBloc = BlocProvider.of<CartBloc>(context);
     final orderBloc = BlocProvider.of<OrderBloc>(context);
 
-    List<Order> orders = cartBloc.getOrdersFromCart();
-
-    OrderList orderList = OrderList(
-      now,
-      orders,
-      'cash',
-      widget.shopDetail.id,
-      now,
-      0,
+    OrderList orders = OrderList(
+      createAt: now,
+      orderList: cartBloc.getOrdersFromCart(),
+      payment: 'cash',
+      shopId: widget.shopDetail.shopId,
+      updateAt: now,
+      userId: 0,
     );
-    orderBloc.add(CreateOrderEvent(orderList));
+    orderBloc.add(CreateOrderEvent(orders));
   }
 
   @override
@@ -105,7 +103,10 @@ class _CheckoutState extends State<Checkout> {
                         child: Text('*' * 100, overflow: TextOverflow.clip),
                       ),
                       const SizedBox(height: 10),
-                      OrderTable(shopDetail: widget.shopDetail),
+                      OrderTable(
+                          shopDetail: widget.shopDetail,
+                          cartBloc: cartBloc,
+                          orderBloc: orderBloc),
                       const SizedBox(height: 10),
                       SizedBox(
                         height: 14,
@@ -163,8 +164,7 @@ class _CheckoutState extends State<Checkout> {
                             onPressed: () {
                               orderBloc
                                   .add(UpdateOrderEvent(payment: 'linepay'));
-                              orderBloc.add(SubmitOrderEvent(
-                                  orderBloc.state.unsubmitted!));
+                              orderBloc.add(SubmitOrderEvent());
                               drawerBloc.add(ItemTappedEvent(TabPage.orders));
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
@@ -179,8 +179,7 @@ class _CheckoutState extends State<Checkout> {
                               ),
                             ),
                             onPressed: () {
-                              orderBloc.add(SubmitOrderEvent(
-                                  orderBloc.state.unsubmitted!));
+                              orderBloc.add(SubmitOrderEvent());
                               drawerBloc.add(ItemTappedEvent(TabPage.orders));
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
@@ -200,19 +199,23 @@ class _CheckoutState extends State<Checkout> {
   }
 }
 
-class OrderTable extends StatefulWidget {
+class OrderTable extends StatelessWidget {
   const OrderTable({
     super.key,
     required this.shopDetail,
+    required this.cartBloc,
+    required this.orderBloc,
   });
 
   final ShopDetail? shopDetail;
+  final OrderBloc orderBloc;
+  final CartBloc cartBloc;
 
-  @override
-  State<OrderTable> createState() => _OrderTableState();
-}
+  void updateOrder() {
+    List<Order> orders = cartBloc.getOrdersFromCart();
+    orderBloc.add(UpdateOrderEvent(orderList: orders));
+  }
 
-class _OrderTableState extends State<OrderTable> {
   List<TableRow> _orderRows(CartBloc cartBloc, OrderBloc orderBloc) {
     List<TableRow> rows = [];
 
@@ -254,7 +257,7 @@ class _OrderTableState extends State<OrderTable> {
     ));
 
     for (int menuId in cartBloc.state.cartItems.toSet()) {
-      Menu? menu = widget.shopDetail!.findMenuById(menuId);
+      Menu? menu = shopDetail!.findMenuById(menuId);
       rows.add(TableRow(
         children: [
           TableCell(
@@ -274,8 +277,7 @@ class _OrderTableState extends State<OrderTable> {
                   ),
                   onPressed: () {
                     cartBloc.add(RemoveFromCartEvent(menuId));
-                    List<Order> orders = cartBloc.getOrdersFromCart();
-                    orderBloc.add(UpdateOrderEvent(orderList: orders));
+                    updateOrder();
                   },
                 ),
                 Text(
@@ -293,8 +295,7 @@ class _OrderTableState extends State<OrderTable> {
                   ),
                   onPressed: () {
                     cartBloc.add(AddToCartEvent(menuId));
-                    List<Order> orders = cartBloc.getOrdersFromCart();
-                    orderBloc.add(UpdateOrderEvent(orderList: orders));
+                    updateOrder();
                   },
                 ),
               ],
@@ -323,9 +324,7 @@ class _OrderTableState extends State<OrderTable> {
 
   @override
   Widget build(BuildContext context) {
-    final cartBloc = BlocProvider.of<CartBloc>(context);
-    final orderBloc = BlocProvider.of<OrderBloc>(context);
-
+    updateOrder();
     return Table(
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       columnWidths: const <int, TableColumnWidth>{

@@ -74,7 +74,6 @@ class ApiClient {
     await post(url, body: jsonEncode(orderList));
   }
 
-  // TODO: need api
   Future<bool> authenticateUser(String email, String password) async {
     Uri url = Uri.parse('$host:$port/$path/user/authenticate');
     try {

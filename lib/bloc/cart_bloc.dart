@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:locostall/models/order.dart';
 
-// 1. Define the events
+/* events */
 abstract class CartEvent {}
 
 class AddToCartEvent extends CartEvent {
@@ -18,14 +18,14 @@ class RemoveFromCartEvent extends CartEvent {
 
 class EmptyCartEvent extends CartEvent {}
 
-// 2. Define the state
+/* states */
 class CartState {
   final List<int> cartItems;
 
   CartState(this.cartItems);
 }
 
-// 3. Create the BLoC class
+/* BLoC */
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartState([])) {
     on<AddToCartEvent>((event, emit) {

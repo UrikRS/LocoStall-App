@@ -8,7 +8,7 @@ enum TabPage {
   settings,
 } // Add more tabs as needed
 
-// 1. Define the events
+/* events */
 abstract class DrawerEvent {}
 
 class ItemTappedEvent extends DrawerEvent {
@@ -17,14 +17,14 @@ class ItemTappedEvent extends DrawerEvent {
   ItemTappedEvent(this.tab);
 }
 
-// 2. Define the state
+/* states */
 class DrawerState {
   final TabPage tab;
 
   DrawerState(this.tab);
 }
 
-// 3. Create the BLoC class
+/* BLoC */
 class DrawerBloc extends Bloc<DrawerEvent, DrawerState> {
   DrawerBloc() : super(DrawerState(TabPage.shops)) {
     on<ItemTappedEvent>((event, emit) => emit(DrawerState(event.tab)));
