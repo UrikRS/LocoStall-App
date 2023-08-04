@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locostall/bloc/cart_bloc.dart';
 import 'package:locostall/bloc/drawer_bloc.dart';
 import 'package:locostall/bloc/order_bloc.dart';
+import 'package:locostall/bloc/user_bloc.dart';
 import 'package:locostall/models/menu.dart';
 import 'package:locostall/models/order.dart';
 import 'package:locostall/models/shop.dart';
@@ -31,16 +32,15 @@ class _CheckoutState extends State<Checkout> {
     now = DateTime.now().toString();
     final cartBloc = BlocProvider.of<CartBloc>(context);
     final orderBloc = BlocProvider.of<OrderBloc>(context);
+    final userBloc = BlocProvider.of<UserBloc>(context);
 
-    OrderList orders = OrderList(
-      createAt: now,
-      orderList: cartBloc.getOrdersFromCart(),
+    Order order = Order(
+      itemList: cartBloc.getItemsFromCart(),
       payment: 'cash',
       shopId: widget.shopDetail.shopId,
-      updateAt: now,
-      userId: 0,
+      userId: userBloc.state.user?.userId ?? 0,
     );
-    orderBloc.add(CreateOrderEvent(orders));
+    orderBloc.add(CreateOrderEvent(order));
   }
 
   @override
@@ -55,6 +55,7 @@ class _CheckoutState extends State<Checkout> {
     final drawerBloc = BlocProvider.of<DrawerBloc>(context);
     final cartBloc = BlocProvider.of<CartBloc>(context);
     final orderBloc = BlocProvider.of<OrderBloc>(context);
+    final userBloc = BlocProvider.of<UserBloc>(context);
 
     return FluidDialog(
       defaultDecoration: const BoxDecoration(color: Colors.transparent),
@@ -65,7 +66,7 @@ class _CheckoutState extends State<Checkout> {
             clipBehavior: Clip.none,
             child: SKSTicketView(
               contentPadding:
-                  const EdgeInsets.symmetric(vertical: 24, horizontal: 10),
+                  const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
               drawArc: false,
               triangleAxis: Axis.vertical,
               backgroundColor: Colors.transparent,
@@ -75,7 +76,7 @@ class _CheckoutState extends State<Checkout> {
               child: SizedBox(
                 width: 400,
                 child: Padding(
-                  padding: const EdgeInsets.all(25.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -87,14 +88,31 @@ class _CheckoutState extends State<Checkout> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Text('address : xxxxxxxxxxxxxxxxxxx'),
-                      const Text('tel. : xxxxxxxxxx'),
+                      const Text(
+                        'address : xxxxxxxxxxxxxxxxxxx',
+                        overflow: TextOverflow.clip,
+                      ),
+                      const Text(
+                        'tel. : xxxxxxxxxx',
+                        overflow: TextOverflow.clip,
+                      ),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('CREATE TIME'),
-                          Text(now),
+                          const Text(
+                            'CREATE TIME',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: 70,
+                            child: Text(
+                              now,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 5),
@@ -133,59 +151,39 @@ class _CheckoutState extends State<Checkout> {
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('PAYMENT'),
-                          Text('user name'),
+                          Text(
+                            'PAYMENT',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Text(
+                            'user name',
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            child: Text(
-                              'CANCEL',
-                              style: TextStyle(
-                                color: Colors.red.shade300,
-                                fontSize: 20,
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.grey.shade100,
+                        ),
+                        child: const Text(
+                          'PAY CASH',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
                           ),
-                          TextButton(
-                            child: Text(
-                              'LINE PAY',
-                              style: TextStyle(
-                                color: Colors.green.shade300,
-                                fontSize: 20,
-                              ),
-                            ),
-                            onPressed: () {
-                              orderBloc
-                                  .add(UpdateOrderEvent(payment: 'linepay'));
-                              orderBloc.add(SubmitOrderEvent());
-                              drawerBloc.add(ItemTappedEvent(TabPage.orders));
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: Text(
-                              'CASH',
-                              style: TextStyle(
-                                color: Colors.blue.shade300,
-                                fontSize: 20,
-                              ),
-                            ),
-                            onPressed: () {
-                              orderBloc.add(SubmitOrderEvent());
-                              drawerBloc.add(ItemTappedEvent(TabPage.orders));
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
+                        ),
+                        onPressed: () {
+                          if (userBloc.state.user != null) {
+                            orderBloc.add(SubmitOrderEvent());
+                            drawerBloc.add(ItemTappedEvent(TabPage.waiting));
+                          } else {
+                            drawerBloc.add(ItemTappedEvent(TabPage.login));
+                          }
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        },
                       ),
                     ],
                   ),
@@ -212,8 +210,8 @@ class OrderTable extends StatelessWidget {
   final CartBloc cartBloc;
 
   void updateOrder() {
-    List<Order> orders = cartBloc.getOrdersFromCart();
-    orderBloc.add(UpdateOrderEvent(orderList: orders));
+    List<Item> items = cartBloc.getItemsFromCart();
+    orderBloc.add(UpdateOrderEvent(itemList: items));
   }
 
   List<TableRow> _orderRows(CartBloc cartBloc, OrderBloc orderBloc) {

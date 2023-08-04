@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:locostall/services/api.dart';
 
 class TakePicture extends StatefulWidget {
   const TakePicture({
@@ -79,6 +80,7 @@ class _TakePictureState extends State<TakePicture> {
                 try {
                   await _initializeControllerFuture;
                   final image = await _controller.takePicture();
+                  await ApiClient().predict(image);
                   print('picture taked');
                 } catch (e) {
                   print(e);

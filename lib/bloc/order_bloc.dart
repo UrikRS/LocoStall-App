@@ -1,18 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:locostall/models/order.dart';
+import 'package:locostall/services/api.dart';
 
 /* events */
 class OrderEvent {}
 
 class CreateOrderEvent extends OrderEvent {
-  final OrderList orders;
+  final Order orders;
 
   CreateOrderEvent(this.orders);
 }
 
 class UpdateOrderEvent extends OrderEvent {
   final String? createAt;
-  final List<Order>? orderList;
+  final List<Item>? itemList;
   final String? payment;
   final int? shopId;
   final String? updateAt;
@@ -20,7 +21,7 @@ class UpdateOrderEvent extends OrderEvent {
 
   UpdateOrderEvent({
     this.createAt,
-    this.orderList,
+    this.itemList,
     this.payment,
     this.shopId,
     this.updateAt,
@@ -32,43 +33,38 @@ class SubmitOrderEvent extends OrderEvent {}
 
 class CancelOrderEvent extends OrderEvent {}
 
-class GetUserOrdersEvent extends OrderEvent {}
-
-/* states */
+/* state */
 class OrderState {
-  final OrderList unsubmitted;
-  final List<OrderList> submitted;
+  final Order? unsubmitted;
 
-  OrderState(this.unsubmitted, this.submitted);
+  OrderState(this.unsubmitted);
 }
 
 /* BLoC */
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
-  OrderBloc() : super(OrderState(OrderList(), [])) {
-    on<CreateOrderEvent>(
-        (event, emit) => emit(OrderState(event.orders, state.submitted)));
+  OrderBloc() : super(OrderState(null)) {
+    on<CreateOrderEvent>((event, emit) => emit(OrderState(event.orders)));
 
     on<UpdateOrderEvent>(
       (event, emit) => emit(
-        OrderState(
-            OrderList(
-              createAt: event.createAt ?? state.unsubmitted.createAt,
-              orderList: event.orderList ?? state.unsubmitted.orderList,
-              payment: event.payment ?? state.unsubmitted.payment,
-              shopId: event.shopId ?? state.unsubmitted.shopId,
-              updateAt: event.updateAt ?? state.unsubmitted.updateAt,
-              userId: event.userId ?? state.unsubmitted.userId,
-            ),
-            state.submitted),
+        OrderState(Order(
+          itemList: event.itemList ?? state.unsubmitted!.itemList,
+          payment: event.payment ?? state.unsubmitted!.payment,
+          shopId: event.shopId ?? state.unsubmitted!.shopId,
+          userId: event.userId ?? state.unsubmitted!.userId,
+        )),
       ),
     );
 
-    on<SubmitOrderEvent>((event, emit) {
-      state.submitted.add(state.unsubmitted);
-      emit(OrderState(OrderList(), state.submitted));
+    on<SubmitOrderEvent>((event, emit) async {
+      if (state.unsubmitted!.itemList != []) {
+        await ApiClient().sendOrder(state.unsubmitted ?? Order());
+        emit(OrderState(null));
+      } else {
+        emit(OrderState(state.unsubmitted));
+      }
     });
 
-    on<CancelOrderEvent>(
-        (event, emit) => emit(OrderState(OrderList(), state.submitted)));
+    on<CancelOrderEvent>((event, emit) => emit(OrderState(null)));
   }
 }

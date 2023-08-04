@@ -1,25 +1,27 @@
 class User {
-  final String userId;
+  final int? userId;
 
   User(this.userId);
 }
 
 class UserData {
-  final String userId;
-  final String lineId;
-  final String appId;
-  final String name;
-  final String nativeLang;
+  final int userId;
+  final String? lineId;
+  final String? name;
+  final String nLang;
   final String email;
   final String password;
+  final String? type;
+  final int? shopId;
 
   UserData(
     this.userId,
     this.lineId,
-    this.appId,
     this.name,
-    this.nativeLang,
+    this.nLang,
     this.email,
     this.password,
+    this.type,
+    this.shopId,
   );
 }

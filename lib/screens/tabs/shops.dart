@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_card/image_card.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:locostall/bloc/all.dart';
 import 'package:locostall/models/shop.dart';
 import 'package:locostall/services/api.dart';
 import 'package:locostall/screens/elements/shop_detail.dart';
@@ -22,10 +23,8 @@ class _ShopsTabState extends State<ShopsTab> {
   }
 
   Future<void> _setData() async {
-    final prefs = await SharedPreferences.getInstance();
-    ApiClient apiClient = ApiClient();
-    String langCode = prefs.getString('langCode') ?? 'en';
-    List<Shop> shops = await apiClient.getShops(langCode);
+    final languageBloc = BlocProvider.of<LanguageBloc>(context);
+    List<Shop> shops = await ApiClient().getShops(languageBloc.state.langCode);
     if (mounted) {
       setState(() {
         _shops = shops;
@@ -50,15 +49,10 @@ class _ShopsTabState extends State<ShopsTab> {
               elevation: 3.0,
               child: TransparentImageCard(
                 width: double.infinity,
-                endColor: Colors.black45,
+                endColor: Colors.black87,
                 borderRadius: 10.0,
                 imageProvider:
                     AssetImage('lib/assets/shops/${shop.shopId}.jpg'),
-                // tags: const [
-                //   Text('category 1'),
-                //   Text('category 2'),
-                //   Text('category 3'),
-                // ],
                 title: Text(
                   shop.name,
                   style: const TextStyle(fontSize: 30, color: Colors.white),
@@ -67,10 +61,6 @@ class _ShopsTabState extends State<ShopsTab> {
                   shop.description,
                   style: const TextStyle(color: Colors.white),
                 ),
-                // footer: Text(
-                //   '${shop.name} footer',
-                //   style: const TextStyle(color: Colors.white),
-                // ),
               ),
             ),
             onTap: () => showDialog(
@@ -87,11 +77,15 @@ class _ShopsTabState extends State<ShopsTab> {
 
   @override
   Widget build(BuildContext context) {
-    _setData();
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      itemCount: 1,
-      itemBuilder: _shopsListBuilder,
+    return BlocListener<LanguageBloc, LanguageState>(
+      listener: (context, state) {
+        _setData();
+      },
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        itemCount: 1,
+        itemBuilder: _shopsListBuilder,
+      ),
     );
   }
 }

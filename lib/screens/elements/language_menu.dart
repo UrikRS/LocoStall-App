@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:locostall/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:locostall/bloc/all.dart';
 
 class LangMenu extends StatefulWidget {
   const LangMenu({super.key, required this.iconButtonTitle});
@@ -17,23 +17,11 @@ class _LangMenuState extends State<LangMenu> {
   @override
   void initState() {
     super.initState();
-    _loadLangCode();
-  }
-
-  Future<void> _loadLangCode() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _langCode = prefs.getString('langCode') ?? 'en';
-    });
-  }
-
-  Future<void> _saveLangCode() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('langCode', _langCode);
   }
 
   @override
   Widget build(BuildContext context) {
+    final languageBloc = BlocProvider.of<LanguageBloc>(context);
     return MenuAnchor(
       childFocusNode: _buttonFocusNode,
       menuChildren: <Widget>[
@@ -41,11 +29,8 @@ class _LangMenuState extends State<LangMenu> {
           value: 'ja',
           groupValue: _langCode,
           onChanged: (value) {
-            setState(() {
-              _langCode = 'ja';
-              _saveLangCode();
-              MyApp.of(context)?.setLocale(const Locale('ja'));
-            });
+            languageBloc.add(ChangeLanguageEvent('ja'));
+            setState(() => _langCode = 'ja');
           },
           child: const Text('日本語'),
         ),
@@ -53,11 +38,8 @@ class _LangMenuState extends State<LangMenu> {
           value: 'en',
           groupValue: _langCode,
           onChanged: (value) {
-            setState(() {
-              _langCode = 'en';
-              _saveLangCode();
-              MyApp.of(context)?.setLocale(const Locale('en'));
-            });
+            languageBloc.add(ChangeLanguageEvent('en'));
+            setState(() => _langCode = 'en');
           },
           child: const Text('English'),
         ),
@@ -65,11 +47,8 @@ class _LangMenuState extends State<LangMenu> {
           value: 'zh',
           groupValue: _langCode,
           onChanged: (value) {
-            setState(() {
-              _langCode = 'zh';
-              _saveLangCode();
-              MyApp.of(context)?.setLocale(const Locale('zh'));
-            });
+            languageBloc.add(ChangeLanguageEvent('zh'));
+            setState(() => _langCode = 'zh');
           },
           child: const Text('中文'),
         ),

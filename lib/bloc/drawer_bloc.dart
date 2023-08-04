@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 
 enum TabPage {
   shops,
-  orders,
+  waiting,
   login,
   register,
   settings,
@@ -17,7 +17,7 @@ class ItemTappedEvent extends DrawerEvent {
   ItemTappedEvent(this.tab);
 }
 
-/* states */
+/* state */
 class DrawerState {
   final TabPage tab;
 

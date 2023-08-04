@@ -1,8 +1,8 @@
-class Order {
+class Item {
   final int prodId;
   final int qty;
 
-  Order(this.prodId, this.qty);
+  Item(this.prodId, this.qty);
 
   Map<String, dynamic> toJson() => {
         'prod_id': prodId,
@@ -10,30 +10,30 @@ class Order {
       };
 }
 
-class OrderList {
-  final String createAt;
-  final List<Order> orderList;
+class Order {
+  final List<Item> itemList;
   final String payment;
   final int shopId;
-  final String updateAt;
   final int userId;
+  final String? state;
+  final String? createAt;
+  final String? updateAt;
 
-  OrderList({
-    this.createAt = '',
-    this.orderList = const [],
+  Order({
+    this.itemList = const [],
     this.payment = '',
     this.shopId = 0,
-    this.updateAt = '',
     this.userId = 0,
+    this.state = '',
+    this.createAt = '',
+    this.updateAt = '',
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'create_at': createAt,
-      'order_list': orderList.map((order) => order.toJson()).toList(),
+      'item_list': itemList.map((item) => item.toJson()).toList(),
       'payment': payment,
       'shop_id': shopId,
-      'update_at': updateAt,
       'user_id': userId,
     };
   }

@@ -1,14 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluid_dialog/fluid_dialog.dart';
-import 'package:locostall/screens/elements/checkout.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_card/image_card.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:locostall/bloc/cart_bloc.dart';
+import 'package:locostall/bloc/all.dart';
+import 'package:locostall/screens/elements/checkout.dart';
 import 'package:locostall/models/shop.dart';
 import 'package:locostall/services/api.dart';
 
@@ -36,11 +35,9 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
   }
 
   Future<void> _setData() async {
-    final prefs = await SharedPreferences.getInstance();
-    ApiClient apiClient = ApiClient();
-    String langCode = prefs.getString('langCode') ?? 'en';
-    ShopDetail shopDetail_ =
-        await apiClient.getShopDetail(langCode, widget.shopId);
+    final languageBloc = BlocProvider.of<LanguageBloc>(context);
+    ShopDetail shopDetail_ = await ApiClient()
+        .getShopDetail(languageBloc.state.langCode, widget.shopId);
     if (mounted) {
       setState(() {
         shopDetail = shopDetail_;
@@ -67,7 +64,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Image.asset(
                     'lib/assets/shops/${shopDetail?.shopId ?? 1}.jpg',
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.cover,
                   ),
                   title: Text(shopDetail?.name ?? 'UNKNOWN'),
                 ),
@@ -115,13 +112,6 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                         ),
                       ),
                     ),
-                    // const Padding(
-                    //   padding: EdgeInsets.all(8.0),
-                    //   child: Text(
-                    //     'catagory 1',
-                    //     style: TextStyle(fontSize: 20),
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     MenusCarousel(shopDetail: shopDetail, context: context),
                     const SizedBox(height: 20),
@@ -198,8 +188,8 @@ class MenusCarousel extends StatelessWidget {
       itemCount: menus?.length ?? 0,
       options: CarouselOptions(
         disableCenter: true,
+        viewportFraction: .7,
         autoPlay: false,
-        viewportFraction: 0.6,
         aspectRatio: 8 / 7,
         enableInfiniteScroll: false,
       ),
@@ -209,7 +199,7 @@ class MenusCarousel extends StatelessWidget {
   }
 }
 
-class MenuItemCard extends StatelessWidget {
+class MenuItemCard extends StatefulWidget {
   const MenuItemCard({
     super.key,
     required this.itemIndex,
@@ -220,87 +210,139 @@ class MenuItemCard extends StatelessWidget {
   final ShopDetail? shopDetail;
 
   @override
+  State<MenuItemCard> createState() => _MenuItemCardState();
+}
+
+class _MenuItemCardState extends State<MenuItemCard> {
+  bool showDetail = false;
+
+  @override
   Widget build(BuildContext context) {
-    final menuItem = shopDetail!.menus?[itemIndex];
+    final menuItem = widget.shopDetail!.menus?[widget.itemIndex];
     final cartBloc = BlocProvider.of<CartBloc>(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: PhysicalModel(
-        color: Colors.transparent,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        elevation: 3.0,
-        child: LayoutBuilder(builder: (context, constraints) {
-          return FillImageCard(
-            heightImage: constraints.maxHeight * .6,
-            borderRadius: 10.0,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-            imageProvider: NetworkImage(
-              'https://dummyimage.com/300x240/ccc/fff.jpg&text=menu$itemIndex-image',
-            ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  menuItem!.name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
+    if (!showDetail) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: PhysicalModel(
+          color: Colors.transparent,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          elevation: 3.0,
+          child: LayoutBuilder(builder: (context, constraints) {
+            return FillImageCard(
+              heightImage: constraints.maxHeight * .52,
+              borderRadius: 10.0,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              imageProvider: NetworkImage(
+                'https://dummyimage.com/300x180/ccc/fff.jpg&text=menu${widget.itemIndex}-image',
+              ),
+              tags: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      showDetail = true;
+                    });
+                  },
+                  child: const Text('Show Detail'),
                 ),
-                Text(
-                  'NT ${menuItem.price}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
               ],
-            ),
-            description: SizedBox(
-              height: constraints.maxHeight * .2,
-              child: Text(
-                menuItem.description,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.black54,
+              title: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: constraints.maxWidth * .5,
+                      child: Text(
+                        menuItem!.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'NT ${menuItem.price}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            footer: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.remove,
-                    size: 18,
+              footer: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove,
+                      size: 18,
+                    ),
+                    onPressed: () =>
+                        cartBloc.add(RemoveFromCartEvent(menuItem.id)),
                   ),
-                  onPressed: () =>
-                      cartBloc.add(RemoveFromCartEvent(menuItem.id)),
+                  Text(
+                    cartBloc.state.cartItems
+                        .where((item) => item == menuItem.id)
+                        .length
+                        .toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.add,
+                      size: 18,
+                    ),
+                    onPressed: () => cartBloc.add(AddToCartEvent(menuItem.id)),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
+      );
+    } else {
+      return Card(
+        clipBehavior: Clip.hardEdge,
+        margin: const EdgeInsets.all(8),
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      showDetail = false;
+                    });
+                  },
                 ),
-                Text(
-                  cartBloc.state.cartItems
-                      .where((item) => item == menuItem.id)
-                      .length
-                      .toString(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  menuItem!.description,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: 1.6,
+                    wordSpacing: 3,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.add,
-                    size: 18,
-                  ),
-                  onPressed: () => cartBloc.add(AddToCartEvent(menuItem.id)),
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

@@ -1,8 +1,10 @@
 import 'package:camera/camera.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:locostall/bloc/drawer_bloc.dart';
+import 'package:locostall/bloc/user_bloc.dart';
 import 'package:locostall/screens/take_picture.dart';
 import 'package:locostall/screens/tabs/all.dart';
 import 'package:locostall/screens/elements/edit_profile.dart';
@@ -33,26 +35,38 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final drawerBloc = BlocProvider.of<DrawerBloc>(context);
+    final userBloc = BlocProvider.of<UserBloc>(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('LocoStall'),
         centerTitle: true,
-        actions: <Widget>[
-          LangMenu(iconButtonTitle: AppLocalizations.of(context)!.language)
-        ],
+        actions: <Widget>[LangMenu(iconButtonTitle: l10n.language)],
       ),
       body: BlocBuilder<DrawerBloc, DrawerState>(
         builder: (context, state) {
           switch (state.tab) {
             case TabPage.shops:
               return const ShopsTab();
-            case TabPage.orders:
-              return const OrdersTab();
+            case TabPage.waiting:
+              return const WaitingTab();
             case TabPage.login:
-              return const LoginTab();
+              return LoginTab(
+                onSubmitted: (email, password) {
+                  userBloc.add(LoginEvent(email!, password!));
+                  drawerBloc.add(ItemTappedEvent(TabPage.shops));
+                },
+              );
             case TabPage.register:
-              return const RegisterTab();
+              return RegisterTab(
+                onSubmitted: (email, password) async {
+                  final prefs = await SharedPreferences.getInstance();
+                  userBloc.add(RegisterEvent(
+                      email!, password!, prefs.getString('langCode') ?? 'en'));
+                  drawerBloc.add(ItemTappedEvent(TabPage.shops));
+                },
+              );
             case TabPage.settings:
               return const Center(child: Text("TODO:"));
           }
@@ -67,8 +81,9 @@ class _HomeState extends State<Home> {
               decoration: const BoxDecoration(
                 color: Colors.blue,
               ),
-              accountName: const Text('name'),
-              accountEmail: const Text('edit profile'),
+              accountName:
+                  Text(userBloc.state.userData?.name ?? 'edit profile'),
+              accountEmail: Text(userBloc.state.userData?.email ?? 'not login'),
               arrowColor: Colors.white,
               currentAccountPicture: const CircleAvatar(
                 backgroundColor: Colors.white,
@@ -80,7 +95,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.storefront),
-              title: Text(AppLocalizations.of(context)!.stalls),
+              title: Text(l10n.stalls),
               selected: drawerBloc.state.tab == TabPage.shops,
               onTap: () {
                 drawerBloc.add(ItemTappedEvent(TabPage.shops));
@@ -90,27 +105,34 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               leading: const Icon(Icons.ramen_dining_outlined),
-              title: Text(AppLocalizations.of(context)!.orders),
-              selected: drawerBloc.state.tab == TabPage.orders,
+              title: Text(l10n.orders),
+              selected: drawerBloc.state.tab == TabPage.waiting,
               onTap: () {
-                drawerBloc.add(ItemTappedEvent(TabPage.orders));
+                drawerBloc.add(ItemTappedEvent(TabPage.waiting));
                 Navigator.pop(context);
                 setState(() {});
               },
             ),
             ListTile(
-              leading: const Icon(Icons.login),
-              title: Text(AppLocalizations.of(context)!.logreg),
-              selected: drawerBloc.state.tab == TabPage.login,
+              leading: Icon(
+                  userBloc.state.user == null ? Icons.login : Icons.logout),
+              title: Text(userBloc.state.user == null ? l10n.logreg : 'Logout'),
+              selected: (drawerBloc.state.tab == TabPage.login) |
+                  (drawerBloc.state.tab == TabPage.register),
               onTap: () {
                 drawerBloc.add(ItemTappedEvent(TabPage.login));
-                Navigator.pop(context);
-                setState(() {});
+                if (userBloc.state.user == null) {
+                  Navigator.pop(context);
+                  setState(() {});
+                } else {
+                  userBloc.add(LogoutEvent());
+                  setState(() {});
+                }
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: Text(AppLocalizations.of(context)!.settings),
+              title: Text(l10n.settings),
               selected: drawerBloc.state.tab == TabPage.settings,
               onTap: () {
                 drawerBloc.add(ItemTappedEvent(TabPage.settings));

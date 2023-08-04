@@ -18,7 +18,7 @@ class RemoveFromCartEvent extends CartEvent {
 
 class EmptyCartEvent extends CartEvent {}
 
-/* states */
+/* state */
 class CartState {
   final List<int> cartItems;
 
@@ -43,13 +43,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<EmptyCartEvent>((event, emit) => emit(CartState([])));
   }
 
-  List<Order> getOrdersFromCart() {
-    List<Order> orders = [];
+  List<Item> getItemsFromCart() {
+    List<Item> items = [];
     for (int menuId in state.cartItems.toSet()) {
-      Order order =
-          Order(menuId, state.cartItems.where((id) => id == menuId).length);
-      orders.add(order);
+      Item item =
+          Item(menuId, state.cartItems.where((id) => id == menuId).length);
+      items.add(item);
     }
-    return orders;
+    return items;
   }
 }
