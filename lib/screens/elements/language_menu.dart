@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locostall/bloc/all.dart';
+import 'package:locostall/theme.dart';
 
 class LangMenu extends StatefulWidget {
   const LangMenu({super.key, required this.iconButtonTitle});
@@ -12,7 +13,6 @@ class LangMenu extends StatefulWidget {
 
 class _LangMenuState extends State<LangMenu> {
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
-  var _langCode = 'en';
 
   @override
   void initState() {
@@ -27,28 +27,25 @@ class _LangMenuState extends State<LangMenu> {
       menuChildren: <Widget>[
         RadioMenuButton<dynamic>(
           value: 'ja',
-          groupValue: _langCode,
+          groupValue: languageBloc.state.langCode,
           onChanged: (value) {
             languageBloc.add(ChangeLanguageEvent('ja'));
-            setState(() => _langCode = 'ja');
           },
           child: const Text('日本語'),
         ),
         RadioMenuButton<dynamic>(
           value: 'en',
-          groupValue: _langCode,
+          groupValue: languageBloc.state.langCode,
           onChanged: (value) {
             languageBloc.add(ChangeLanguageEvent('en'));
-            setState(() => _langCode = 'en');
           },
           child: const Text('English'),
         ),
         RadioMenuButton<dynamic>(
           value: 'zh',
-          groupValue: _langCode,
+          groupValue: languageBloc.state.langCode,
           onChanged: (value) {
             languageBloc.add(ChangeLanguageEvent('zh'));
-            setState(() => _langCode = 'zh');
           },
           child: const Text('中文'),
         ),
@@ -66,18 +63,18 @@ class _LangMenuState extends State<LangMenu> {
           },
           icon: const Icon(
             Icons.translate,
-            color: Colors.white,
+            color: lsDark,
           ),
           label: Row(
             children: [
               Text(
                 widget.iconButtonTitle,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: lsDark),
               ),
               const Icon(
                 Icons.keyboard_arrow_down,
                 size: 20,
-                color: Colors.white,
+                color: lsDark,
               )
             ],
           ),

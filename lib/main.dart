@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:locostall/bloc/all.dart';
 import 'package:locostall/screens/home.dart';
+import 'package:locostall/theme.dart';
 
 void main() => runApp(MultiBlocProvider(
       providers: [
@@ -30,19 +31,16 @@ class Root extends StatefulWidget {
   const Root({super.key});
 
   @override
-  State<Root> createState() => _MyAppState();
+  State<Root> createState() => _RootState();
 }
 
-class _MyAppState extends State<Root> {
+class _RootState extends State<Root> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'LocoStall',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      // darkTheme: ThemeData.dark(),
+      theme: locostallTheme,
       locale: Locale(context.read<LanguageBloc>().state.langCode),
       localizationsDelegates: const [
         AppLocalizations.delegate,

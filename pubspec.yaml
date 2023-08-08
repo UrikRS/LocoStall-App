@@ -12,7 +12,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
-  uuid: ^3.0.6
   shared_preferences: ^2.2.0
   http: ^1.1.0
   http_parser: ^4.0.2
@@ -37,6 +36,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  fonts:
+    - family: BowlbyOneSC
+      fonts:
+        - asset: lib/assets/fonts/Bowlby_One_SC/BowlbyOneSC-Regular.ttf
+    - family: YsabeauSC
+      fonts:
+        - asset: lib/assets/fonts/Ysabeau_SC/YsabeauSC-VariableFont_wght.ttf
   assets:
     - lib/assets/shops/
     - lib/assets/menus/

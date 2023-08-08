@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 
 enum TabPage {
+  markets,
   shops,
   waiting,
   login,
@@ -26,7 +27,7 @@ class DrawerState {
 
 /* BLoC */
 class DrawerBloc extends Bloc<DrawerEvent, DrawerState> {
-  DrawerBloc() : super(DrawerState(TabPage.shops)) {
+  DrawerBloc() : super(DrawerState(TabPage.markets)) {
     on<ItemTappedEvent>((event, emit) => emit(DrawerState(event.tab)));
   }
 }

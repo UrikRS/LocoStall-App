@@ -207,7 +207,7 @@ class ApiClient {
     return userData;
   }
 
-  Future<void> predict(XFile image) async {
+  Future<int> predict(XFile image) async {
     Uri url = Uri.parse('$host/$path/predict');
 
     // Convert the XFile to bytes
@@ -231,7 +231,8 @@ class ApiClient {
     // Send the request and handle the response
     var response = await Response.fromStream(await request.send());
 
-    // Handle the response here
     print(response.body);
+    int pred = jsonDecode(response.body)['predicted_class'];
+    return pred;
   }
 }

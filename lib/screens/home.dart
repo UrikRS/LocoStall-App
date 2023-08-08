@@ -1,4 +1,6 @@
 import 'package:camera/camera.dart';
+import 'package:locostall/screens/tabs/markets.dart';
+import 'package:locostall/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +25,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    // initCamera();
+    initCamera();
   }
 
   Future<void> initCamera() async {
@@ -47,6 +49,8 @@ class _HomeState extends State<Home> {
       body: BlocBuilder<DrawerBloc, DrawerState>(
         builder: (context, state) {
           switch (state.tab) {
+            case TabPage.markets:
+              return const MarketsTab();
             case TabPage.shops:
               return const ShopsTab();
             case TabPage.waiting:
@@ -78,9 +82,7 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-              ),
+              decoration: const BoxDecoration(color: lsPrimary),
               accountName:
                   Text(userBloc.state.userData?.name ?? 'edit profile'),
               accountEmail: Text(userBloc.state.userData?.email ?? 'not login'),
