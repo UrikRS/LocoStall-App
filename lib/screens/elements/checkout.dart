@@ -148,17 +148,17 @@ class _CheckoutState extends State<Checkout> {
                         child: Text('*' * 100, overflow: TextOverflow.clip),
                       ),
                       const SizedBox(height: 5),
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'PAYMENT',
                             style: TextStyle(fontSize: 12),
                           ),
                           Text(
-                            'user name',
+                            '${userBloc.state.userData?.name}',
                             overflow: TextOverflow.clip,
-                            style: TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ],
                       ),

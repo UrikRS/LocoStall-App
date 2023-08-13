@@ -5,6 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:locostall/theme.dart';
 
 class FormButton extends StatelessWidget {
   final String text;
@@ -19,14 +20,19 @@ class FormButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed as void Function()?,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(vertical: screenHeight * .02),
+        padding: EdgeInsets.symmetric(vertical: screenHeight * .025),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
       ),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 16),
+        style: const TextStyle(
+          fontFamily: 'YsabeauSC',
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: lsDark,
+        ),
       ),
     );
   }

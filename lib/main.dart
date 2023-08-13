@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:locostall/bloc/all.dart';
+import 'package:locostall/bloc/waiting_bloc.dart';
 import 'package:locostall/screens/home.dart';
 import 'package:locostall/theme.dart';
 
@@ -22,6 +23,9 @@ void main() => runApp(MultiBlocProvider(
         ),
         BlocProvider(
           create: (context) => UserBloc(),
+        ),
+        BlocProvider(
+          create: (context) => WaitingBloc(),
         ),
       ],
       child: const Root(),
@@ -60,14 +64,18 @@ class _RootState extends State<Root> {
       home: MultiBlocListener(
         listeners: [
           BlocListener<LanguageBloc, LanguageState>(
-            listener: (context, state) {
-              setState(() {});
-            },
+            listener: (context, state) => setState(() {}),
           ),
           BlocListener<CartBloc, CartState>(
-            listener: (context, state) {
-              setState(() {});
-            },
+            listener: (context, state) => setState(() {}),
+          ),
+          BlocListener<UserBloc, UserState>(listener: (context, state) {
+            final languageBloc = BlocProvider.of<LanguageBloc>(context);
+            languageBloc.add(ChangeLanguageEvent(
+                state.userData?.nLang ?? languageBloc.state.langCode));
+          }),
+          BlocListener<WaitingBloc, WaitingState>(
+            listener: (context, state) => setState(() {}),
           ),
         ],
         child: const Home(),

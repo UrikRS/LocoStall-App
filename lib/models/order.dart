@@ -1,6 +1,8 @@
 class Item {
   final int prodId;
   final int qty;
+  String? name;
+  int? price;
 
   Item(this.prodId, this.qty);
 
@@ -18,6 +20,7 @@ class Order {
   final String? state;
   final String? createAt;
   final String? updateAt;
+  final String? shopName;
 
   Order({
     this.itemList = const [],
@@ -27,6 +30,7 @@ class Order {
     this.state = '',
     this.createAt = '',
     this.updateAt = '',
+    this.shopName = '',
   });
 
   Map<String, dynamic> toJson() {

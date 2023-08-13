@@ -1,4 +1,6 @@
 import 'package:camera/camera.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:locostall/bloc/waiting_bloc.dart';
 import 'package:locostall/screens/tabs/markets.dart';
 import 'package:locostall/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +27,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    initCamera();
+    // initCamera();
   }
 
   Future<void> initCamera() async {
@@ -60,6 +62,7 @@ class _HomeState extends State<Home> {
                 onSubmitted: (email, password) {
                   userBloc.add(LoginEvent(email!, password!));
                   drawerBloc.add(ItemTappedEvent(TabPage.shops));
+                  setState(() {});
                 },
               );
             case TabPage.register:
@@ -69,6 +72,7 @@ class _HomeState extends State<Home> {
                   userBloc.add(RegisterEvent(
                       email!, password!, prefs.getString('langCode') ?? 'en'));
                   drawerBloc.add(ItemTappedEvent(TabPage.shops));
+                  setState(() {});
                 },
               );
             case TabPage.settings:
@@ -76,74 +80,95 @@ class _HomeState extends State<Home> {
           }
         },
       ),
-      drawer: Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(color: lsPrimary),
-              accountName:
-                  Text(userBloc.state.userData?.name ?? 'edit profile'),
-              accountEmail: Text(userBloc.state.userData?.email ?? 'not login'),
-              arrowColor: Colors.white,
-              currentAccountPicture: const CircleAvatar(
-                backgroundColor: Colors.white,
-              ),
-              onDetailsPressed: () => showDialog(
-                context: context,
-                builder: (context) => const EditProfile(),
-              ),
+      drawer: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return Drawer(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: [
+                UserAccountsDrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: lsPrimary,
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'lib/assets/logos/LocoStall_design_finish_locostall_favi_2.png'),
+                      alignment: Alignment.centerRight,
+                    ),
+                  ),
+                  accountName: Text(state.userData?.name ?? 'edit profile'),
+                  accountEmail: Text(state.userData?.email ?? 'not login'),
+                  arrowColor: Colors.transparent,
+                  onDetailsPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => const EditProfile(),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.storefront),
+                  title: Text(l10n.stalls),
+                  selected: drawerBloc.state.tab == TabPage.shops,
+                  onTap: () {
+                    drawerBloc.add(ItemTappedEvent(TabPage.shops));
+                    Navigator.pop(context);
+                    setState(() {});
+                  },
+                ),
+                BlocBuilder<WaitingBloc, WaitingState>(
+                  builder: (context, state) {
+                    context
+                        .read<WaitingBloc>()
+                        .add(FetchDataEvent(userBloc.state.user?.userId ?? 0));
+                    return ListTile(
+                      leading: const Icon(Icons.ramen_dining_outlined),
+                      title: Text(l10n.orders),
+                      trailing: badges.Badge(
+                        badgeStyle:
+                            badges.BadgeStyle(badgeColor: Colors.grey.shade700),
+                        badgeContent: Text(
+                          '${state.orders.length - state.orders.where((order) => order.state == 'finish').length - state.orders.where((order) => order.state == 'cancel').length}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      selected: drawerBloc.state.tab == TabPage.waiting,
+                      onTap: () {
+                        drawerBloc.add(ItemTappedEvent(TabPage.waiting));
+                        Navigator.pop(context);
+                        setState(() {});
+                      },
+                    );
+                  },
+                ),
+                ListTile(
+                  leading:
+                      Icon(state.user == null ? Icons.login : Icons.logout),
+                  title: Text(state.user == null ? l10n.logreg : 'Logout'),
+                  selected: (drawerBloc.state.tab == TabPage.login) |
+                      (drawerBloc.state.tab == TabPage.register),
+                  onTap: () {
+                    drawerBloc.add(ItemTappedEvent(TabPage.login));
+                    if (state.user == null) {
+                      Navigator.pop(context);
+                    } else {
+                      userBloc.add(LogoutEvent());
+                    }
+                    setState(() {});
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: Text(l10n.settings),
+                  selected: drawerBloc.state.tab == TabPage.settings,
+                  onTap: () {
+                    drawerBloc.add(ItemTappedEvent(TabPage.settings));
+                    Navigator.pop(context);
+                    setState(() {});
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.storefront),
-              title: Text(l10n.stalls),
-              selected: drawerBloc.state.tab == TabPage.shops,
-              onTap: () {
-                drawerBloc.add(ItemTappedEvent(TabPage.shops));
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.ramen_dining_outlined),
-              title: Text(l10n.orders),
-              selected: drawerBloc.state.tab == TabPage.waiting,
-              onTap: () {
-                drawerBloc.add(ItemTappedEvent(TabPage.waiting));
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                  userBloc.state.user == null ? Icons.login : Icons.logout),
-              title: Text(userBloc.state.user == null ? l10n.logreg : 'Logout'),
-              selected: (drawerBloc.state.tab == TabPage.login) |
-                  (drawerBloc.state.tab == TabPage.register),
-              onTap: () {
-                drawerBloc.add(ItemTappedEvent(TabPage.login));
-                if (userBloc.state.user == null) {
-                  Navigator.pop(context);
-                  setState(() {});
-                } else {
-                  userBloc.add(LogoutEvent());
-                  setState(() {});
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text(l10n.settings),
-              selected: drawerBloc.state.tab == TabPage.settings,
-              onTap: () {
-                drawerBloc.add(ItemTappedEvent(TabPage.settings));
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
-          ],
-        ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

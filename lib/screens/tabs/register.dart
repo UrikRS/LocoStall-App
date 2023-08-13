@@ -169,7 +169,7 @@ class _SimpleRegisterScreenState extends State<RegisterTab> {
                 TextSpan(
                   text: AppLocalizations.of(context)!.login,
                   style: const TextStyle(
-                    color: Colors.blue,
+                    color: Colors.amber,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

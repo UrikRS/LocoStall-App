@@ -64,10 +64,11 @@ class ApiClient {
         shopDetail_['lang'],
         shopDetail_['rating'],
         menus,
+        shopDetail_['description'],
       );
       return shopDetail;
     } catch (e) {
-      return ShopDetail(0, 0, 'UNKNOWN', langCode, 0, []);
+      return ShopDetail(0, 0, 'UNKNOWN', langCode, 0, [], '');
     }
   }
 
@@ -117,16 +118,19 @@ class ApiClient {
             item_['prod_id'],
             item_['qty'],
           );
+          item.name = item_['name'];
+          item.price = item_['price'];
           items.add(item);
         }
         Order order = Order(
           itemList: items,
           payment: order_['payment'],
-          shopId: int.parse(order_['shop_id']),
-          userId: int.parse(order_['user_id']),
+          shopId: order_['shop_id'],
+          userId: order_['user_id'],
           state: order_['state'],
           createAt: order_['created_at'],
           updateAt: order_['updated_at'],
+          shopName: order_['shop_name'],
         );
         orders.add(order);
       }
@@ -207,11 +211,29 @@ class ApiClient {
     return userData;
   }
 
-  Future<int> predict(XFile image) async {
+  Future<void> updateUserData(UserData userData) async {
+    Uri url = Uri.parse('$host/$path/user/${userData.userId}');
+    await post(url,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        body: jsonEncode({
+          "display_name": userData.name,
+          "mail": userData.email,
+          "native_lang": userData.nLang,
+          "line_id": userData.lineId,
+          "password": userData.password,
+          "type": userData.type,
+          "shop_id": userData.shopId
+        }));
+  }
+
+  Future<int> predict(dynamic file) async {
     Uri url = Uri.parse('$host/$path/predict');
 
-    // Convert the XFile to bytes
-    final File file = File(image.path);
+    if (file is XFile) {
+      file = File(file.path);
+    }
     List<int> imageBytes = await file.readAsBytes();
 
     // Convert bytes to a http.MultipartFile

@@ -161,7 +161,7 @@ class _SimpleLoginScreenState extends State<LoginTab> {
                 TextSpan(
                   text: AppLocalizations.of(context)!.signup,
                   style: const TextStyle(
-                    color: Colors.blue,
+                    color: Colors.amber,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

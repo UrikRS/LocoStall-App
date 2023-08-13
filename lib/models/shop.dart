@@ -5,7 +5,7 @@ class Shop {
   final String lang;
   final String name;
   final int shopId;
-  final dynamic description;
+  final String description;
 
   Shop(
     this.id,
@@ -23,15 +23,10 @@ class ShopDetail {
   final String lang;
   final int rating;
   final List<Menu>? menus;
+  final String description;
 
-  ShopDetail(
-    this.id,
-    this.shopId,
-    this.name,
-    this.lang,
-    this.rating,
-    this.menus,
-  );
+  ShopDetail(this.id, this.shopId, this.name, this.lang, this.rating,
+      this.menus, this.description);
 
   Menu? findMenuById(int menuId) {
     for (Menu menu in menus!) {

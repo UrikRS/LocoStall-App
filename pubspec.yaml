@@ -27,6 +27,7 @@ dependencies:
   badges: ^3.1.1
   sks_ticket_view: ^1.0.0
   fluid_dialog: ^2.0.0
+  timelines: ^0.1.0
 
 dev_dependencies:
   flutter_test:
@@ -46,3 +47,4 @@ flutter:
   assets:
     - lib/assets/shops/
     - lib/assets/menus/
+    - lib/assets/logos/

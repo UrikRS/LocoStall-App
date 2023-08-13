@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 
 /* events */
-class LanguageEvent {}
+abstract class LanguageEvent {}
 
 class ChangeLanguageEvent extends LanguageEvent {
   final String langCode;
@@ -19,7 +19,7 @@ class LanguageState {
 /* BLoC */
 class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
   LanguageBloc() : super(LanguageState('en')) {
-    on<ChangeLanguageEvent>(
-        (event, emit) => emit(LanguageState(event.langCode)));
+    on<ChangeLanguageEvent>((event, emit) =>
+        emit(LanguageState(event.langCode == 'jp' ? 'ja' : event.langCode)));
   }
 }

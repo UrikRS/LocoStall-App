@@ -55,7 +55,7 @@
         "type": "text",
         "context": "Forgot Paassword"
     },
-    "newuser": "I'm a new user",
+    "newuser": "I'm a new user,",
     "@newuser": {
         "type": "text",
         "context": "I'm a new user"

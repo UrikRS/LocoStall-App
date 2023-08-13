@@ -5,6 +5,7 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:locostall/theme.dart';
 
 class InputField extends StatelessWidget {
   final String? labelText;
@@ -37,6 +38,8 @@ class InputField extends StatelessWidget {
       textInputAction: textInputAction,
       obscureText: obscureText,
       decoration: InputDecoration(
+        focusColor: Colors.amber,
+        floatingLabelStyle: const TextStyle(color: lsDark),
         labelText: labelText,
         errorText: errorText,
         floatingLabelBehavior: FloatingLabelBehavior.always,

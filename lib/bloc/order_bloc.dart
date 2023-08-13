@@ -3,7 +3,7 @@ import 'package:locostall/models/order.dart';
 import 'package:locostall/services/api.dart';
 
 /* events */
-class OrderEvent {}
+abstract class OrderEvent {}
 
 class CreateOrderEvent extends OrderEvent {
   final Order orders;

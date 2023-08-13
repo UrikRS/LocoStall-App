@@ -12,7 +12,10 @@ import 'package:locostall/models/shop.dart';
 import 'package:locostall/services/api.dart';
 
 class ShopDetailDialog extends StatefulWidget {
-  const ShopDetailDialog({super.key, required this.shopId});
+  const ShopDetailDialog({
+    super.key,
+    required this.shopId,
+  });
   final dynamic shopId;
 
   @override
@@ -92,12 +95,14 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      height: 100,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'detail of shop id ${widget.shopId} : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-                          style: const TextStyle(fontSize: 20),
+                      height: 150,
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            shopDetail?.description ?? 'UNKNOWN',
+                            style: const TextStyle(fontSize: 20),
+                          ),
                         ),
                       ),
                     ),
@@ -183,18 +188,41 @@ class MenusCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final menus = shopDetail?.menus;
+    var screenHeight = MediaQuery.of(context).size.height;
+    int itemCount = (menus?.length ?? 0) ~/ 2;
 
     return CarouselSlider.builder(
-      itemCount: menus?.length ?? 0,
       options: CarouselOptions(
         disableCenter: true,
         viewportFraction: .7,
         autoPlay: false,
-        aspectRatio: 8 / 7,
+        height: menus?.length == 1 ? screenHeight * .4 : screenHeight * .8,
         enableInfiniteScroll: false,
       ),
-      itemBuilder: (context, itemIndex, pageViewIndex) =>
-          MenuItemCard(itemIndex: itemIndex, shopDetail: shopDetail),
+      itemCount: menus?.length == 1 ? 1 : itemCount,
+      itemBuilder: (context, itemIndex, pageViewIndex) {
+        final int first = itemIndex * 2;
+        final int second = first + 1;
+
+        return Column(
+          children: [
+            if (first < menus!.length)
+              Expanded(
+                child: MenuItemCard(
+                  itemIndex: first,
+                  shopDetail: shopDetail,
+                ),
+              ),
+            if (second < menus.length)
+              Expanded(
+                child: MenuItemCard(
+                  itemIndex: second,
+                  shopDetail: shopDetail,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
