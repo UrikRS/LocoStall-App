@@ -13,6 +13,7 @@
     "forgotpassword": "Forgot Paassword",
     "newuser": "I'm a new user,",
     "login": "ログイン",
+    "logout": "ログアウト",
     "signup": "登録",
 	"settings" : "設定",
     "language": "言語"

@@ -30,6 +30,11 @@
         "type": "text",
         "context": "Login or Register"
     },
+    "logout": "Logout",
+    "@logout": {
+        "type": "text",
+        "context": "Logout"
+    },
     "welcome": "Welcome,",
     "@welcome": {
         "type": "text",

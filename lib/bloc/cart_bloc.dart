@@ -5,15 +5,15 @@ import 'package:locostall/models/order.dart';
 abstract class CartEvent {}
 
 class AddToCartEvent extends CartEvent {
-  final int menuId;
+  final int prodId;
 
-  AddToCartEvent(this.menuId);
+  AddToCartEvent(this.prodId);
 }
 
 class RemoveFromCartEvent extends CartEvent {
-  final int menuId;
+  final int prodId;
 
-  RemoveFromCartEvent(this.menuId);
+  RemoveFromCartEvent(this.prodId);
 }
 
 class EmptyCartEvent extends CartEvent {}
@@ -29,13 +29,13 @@ class CartState {
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartState([])) {
     on<AddToCartEvent>((event, emit) {
-      state.cartItems.add(event.menuId);
+      state.cartItems.add(event.prodId);
       emit(CartState(state.cartItems));
     });
 
     on<RemoveFromCartEvent>((event, emit) {
-      if (state.cartItems.contains(event.menuId)) {
-        state.cartItems.remove(event.menuId);
+      if (state.cartItems.contains(event.prodId)) {
+        state.cartItems.remove(event.prodId);
       }
       emit(CartState(state.cartItems));
     });
@@ -45,9 +45,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   List<Item> getItemsFromCart() {
     List<Item> items = [];
-    for (int menuId in state.cartItems.toSet()) {
+    for (int prodId in state.cartItems.toSet()) {
       Item item =
-          Item(menuId, state.cartItems.where((id) => id == menuId).length);
+          Item(prodId, state.cartItems.where((id) => id == prodId).length);
       items.add(item);
     }
     return items;

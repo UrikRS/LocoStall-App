@@ -13,6 +13,7 @@ class Item {
 }
 
 class Order {
+  final int? orderId;
   final List<Item> itemList;
   final String payment;
   final int shopId;
@@ -23,6 +24,7 @@ class Order {
   final String? shopName;
 
   Order({
+    this.orderId = 0,
     this.itemList = const [],
     this.payment = '',
     this.shopId = 0,

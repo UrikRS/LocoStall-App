@@ -254,8 +254,8 @@ class OrderTable extends StatelessWidget {
       ],
     ));
 
-    for (int menuId in cartBloc.state.cartItems.toSet()) {
-      Menu? menu = shopDetail!.findMenuById(menuId);
+    for (int prodId in cartBloc.state.cartItems.toSet()) {
+      Menu? menu = shopDetail!.findMenuById(prodId);
       rows.add(TableRow(
         children: [
           TableCell(
@@ -274,13 +274,13 @@ class OrderTable extends StatelessWidget {
                     color: Colors.black,
                   ),
                   onPressed: () {
-                    cartBloc.add(RemoveFromCartEvent(menuId));
+                    cartBloc.add(RemoveFromCartEvent(prodId));
                     updateOrder();
                   },
                 ),
                 Text(
                   cartBloc.state.cartItems
-                      .where((item) => item == menuId)
+                      .where((item) => item == prodId)
                       .length
                       .toString(),
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -292,7 +292,7 @@ class OrderTable extends StatelessWidget {
                     color: Colors.black,
                   ),
                   onPressed: () {
-                    cartBloc.add(AddToCartEvent(menuId));
+                    cartBloc.add(AddToCartEvent(prodId));
                     updateOrder();
                   },
                 ),
@@ -304,11 +304,11 @@ class OrderTable extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '${cartBloc.state.cartItems.where((item) => item == menuId).length} x ${menu.price}',
+                  '${cartBloc.state.cartItems.where((item) => item == prodId).length} x ${menu.price}',
                   style: const TextStyle(fontSize: 10),
                 ),
                 Text(
-                  '= ${menu.price * cartBloc.state.cartItems.where((item) => item == menuId).length}',
+                  '= ${menu.price * cartBloc.state.cartItems.where((item) => item == prodId).length}',
                 ),
               ],
             ),

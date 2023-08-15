@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_card/image_card.dart';
@@ -51,8 +52,7 @@ class _ShopsTabState extends State<ShopsTab> {
                 width: double.infinity,
                 endColor: Colors.black87,
                 borderRadius: 10.0,
-                imageProvider:
-                    AssetImage('lib/assets/shops/${shop.shopId}.jpg'),
+                imageProvider: CachedNetworkImageProvider(shop.cover),
                 title: Text(
                   shop.name,
                   style: const TextStyle(fontSize: 30, color: Colors.white),

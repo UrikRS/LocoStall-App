@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   intl: any
   shared_preferences: ^2.2.0
+  cached_network_image: ^3.2.3
   http: ^1.1.0
   http_parser: ^4.0.2
   camera: ^0.10.5+2
@@ -46,5 +47,4 @@ flutter:
         - asset: lib/assets/fonts/Ysabeau_SC/YsabeauSC-VariableFont_wght.ttf
   assets:
     - lib/assets/shops/
-    - lib/assets/menus/
     - lib/assets/logos/

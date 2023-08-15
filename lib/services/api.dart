@@ -24,11 +24,10 @@ class ApiClient {
       List<Shop> shops = [];
       for (dynamic shop_ in shops_) {
         Shop shop = Shop(
-          shop_['id'],
-          shop_['lang'],
           shop_['name'],
           shop_['shop_id'],
           shop_['description'],
+          shop_['cover'],
         );
         shops.add(shop);
       }
@@ -51,9 +50,12 @@ class ApiClient {
       for (dynamic menu_ in menus_) {
         Menu menu = Menu(
           menu_['id'],
+          menu_['prod_id'],
+          menu_['shop_id'],
           menu_['name'],
           menu_['description'],
           menu_['price'],
+          menu_['image'],
         );
         menus.add(menu);
       }
@@ -75,6 +77,7 @@ class ApiClient {
   Future<Order> sendOrder(Order order) async {
     Uri url = Uri.parse('$host/$path/send_order');
     try {
+      print(jsonEncode(order));
       final response = await post(
         url,
         headers: {
@@ -123,6 +126,7 @@ class ApiClient {
           items.add(item);
         }
         Order order = Order(
+          orderId: order_['id'],
           itemList: items,
           payment: order_['payment'],
           shopId: order_['shop_id'],
@@ -137,6 +141,17 @@ class ApiClient {
       return orders;
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<Menu> getMenuItem(menuId) async {
+    Uri url = Uri.parse('$host/$path/menu_item/$menuId');
+    try {
+      final response = await get(url);
+      Menu menu = jsonDecode(response.body);
+      return menu;
+    } catch (e) {
+      return Menu(0, 0, 0, '', '', 0, '');
     }
   }
 

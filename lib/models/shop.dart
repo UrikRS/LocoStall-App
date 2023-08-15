@@ -1,18 +1,16 @@
 import 'package:locostall/models/menu.dart';
 
 class Shop {
-  final int id;
-  final String lang;
   final String name;
   final int shopId;
   final String description;
+  final String cover;
 
   Shop(
-    this.id,
-    this.lang,
     this.name,
     this.shopId,
     this.description,
+    this.cover,
   );
 }
 
@@ -25,12 +23,19 @@ class ShopDetail {
   final List<Menu>? menus;
   final String description;
 
-  ShopDetail(this.id, this.shopId, this.name, this.lang, this.rating,
-      this.menus, this.description);
+  ShopDetail(
+    this.id,
+    this.shopId,
+    this.name,
+    this.lang,
+    this.rating,
+    this.menus,
+    this.description,
+  );
 
-  Menu? findMenuById(int menuId) {
+  Menu? findMenuById(int prodId) {
     for (Menu menu in menus!) {
-      if (menu.id == menuId) {
+      if (menu.prodId == prodId) {
         return menu;
       }
     }

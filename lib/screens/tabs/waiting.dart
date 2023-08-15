@@ -77,7 +77,7 @@ class _WaitingTabState extends State<WaitingTab> {
             if (order.state == states[index]) {
               var pay = 0;
               for (Item item in order.itemList) {
-                pay += item.qty * item.price!;
+                pay += item.qty * (item.price ?? 0);
               }
               listContent.add(
                 Align(
@@ -313,11 +313,20 @@ class Receipt extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 15),
+                      Text(
+                        'ORDER NUMBER : ${order.orderId}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
                       const Text(
                         'THANK YOU !',
                         style: TextStyle(
+                          color: Color(0xFF3F3B34),
+                          fontFamily: 'BowlbyOneSC',
                           fontSize: 20,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -381,13 +390,15 @@ class OrderTable extends StatelessWidget {
         children: [
           TableCell(
             child: Text(
-              item.name!,
+              item.name ?? 'UNKNOWN',
             ),
           ),
           TableCell(
-            child: Text(
-              '${item.qty}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            child: Center(
+              child: Text(
+                '${item.qty}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           TableCell(
@@ -399,7 +410,7 @@ class OrderTable extends StatelessWidget {
                   style: const TextStyle(fontSize: 10),
                 ),
                 Text(
-                  '= ${item.qty * item.price!}',
+                  '= ${item.qty * (item.price ?? 0)}',
                 ),
               ],
             ),

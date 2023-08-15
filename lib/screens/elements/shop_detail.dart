@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluid_dialog/fluid_dialog.dart';
 import 'package:image_card/image_card.dart';
@@ -66,10 +67,16 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                 expandedHeight: MediaQuery.of(context).size.height * .25,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Image.asset(
-                    'lib/assets/shops/${shopDetail?.shopId ?? 1}.jpg',
+                    'lib/assets/shops/${shopDetail?.shopId ?? 1}-2.jpg',
                     fit: BoxFit.cover,
                   ),
-                  title: Text(shopDetail?.name ?? 'UNKNOWN'),
+                  title: Text(
+                    shopDetail?.name ?? 'UNKNOWN',
+                    style: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 actions: [OrderButton(shopDetail: shopDetail)],
               ),
@@ -255,14 +262,16 @@ class _MenuItemCardState extends State<MenuItemCard> {
         child: PhysicalModel(
           color: Colors.transparent,
           borderRadius: const BorderRadius.all(Radius.circular(10)),
-          elevation: 3.0,
+          elevation: 10.0,
           child: LayoutBuilder(builder: (context, constraints) {
             return FillImageCard(
+              width: constraints.maxWidth,
               heightImage: constraints.maxHeight * .52,
               borderRadius: 10.0,
               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-              imageProvider: NetworkImage(
-                'https://dummyimage.com/300x180/ccc/fff.jpg&text=menu${widget.itemIndex}-image',
+              imageProvider: CachedNetworkImageProvider(
+                menuItem?.image ??
+                    'https://dummyimage.com/300x180/ccc/fff.jpg&text=menu',
               ),
               tags: [
                 TextButton(
@@ -271,7 +280,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                       showDetail = true;
                     });
                   },
-                  child: const Text('Show Detail'),
+                  child: const Text('DETAIL'),
                 ),
               ],
               title: Padding(
@@ -310,11 +319,11 @@ class _MenuItemCardState extends State<MenuItemCard> {
                       size: 18,
                     ),
                     onPressed: () =>
-                        cartBloc.add(RemoveFromCartEvent(menuItem.id)),
+                        cartBloc.add(RemoveFromCartEvent(menuItem.prodId)),
                   ),
                   Text(
                     cartBloc.state.cartItems
-                        .where((item) => item == menuItem.id)
+                        .where((item) => item == menuItem.prodId)
                         .length
                         .toString(),
                     style: const TextStyle(
@@ -326,7 +335,8 @@ class _MenuItemCardState extends State<MenuItemCard> {
                       Icons.add,
                       size: 18,
                     ),
-                    onPressed: () => cartBloc.add(AddToCartEvent(menuItem.id)),
+                    onPressed: () =>
+                        cartBloc.add(AddToCartEvent(menuItem.prodId)),
                   ),
                 ],
               ),

@@ -96,7 +96,7 @@ class _HomeState extends State<Home> {
                       alignment: Alignment.centerRight,
                     ),
                   ),
-                  accountName: Text(state.userData?.name ?? 'edit profile'),
+                  accountName: Text(state.userData?.name ?? ' '),
                   accountEmail: Text(state.userData?.email ?? 'not login'),
                   arrowColor: Colors.transparent,
                   onDetailsPressed: () => showDialog(
@@ -142,7 +142,7 @@ class _HomeState extends State<Home> {
                 ListTile(
                   leading:
                       Icon(state.user == null ? Icons.login : Icons.logout),
-                  title: Text(state.user == null ? l10n.logreg : 'Logout'),
+                  title: Text(state.user == null ? l10n.logreg : l10n.logout),
                   selected: (drawerBloc.state.tab == TabPage.login) |
                       (drawerBloc.state.tab == TabPage.register),
                   onTap: () {
