@@ -3,7 +3,6 @@ import 'package:badges/badges.dart' as badges;
 import 'package:locostall/bloc/waiting_bloc.dart';
 import 'package:locostall/screens/tabs/markets.dart';
 import 'package:locostall/theme.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -27,7 +26,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    // initCamera();
+    initCamera();
   }
 
   Future<void> initCamera() async {
@@ -68,9 +67,7 @@ class _HomeState extends State<Home> {
             case TabPage.register:
               return RegisterTab(
                 onSubmitted: (email, password) async {
-                  final prefs = await SharedPreferences.getInstance();
-                  userBloc.add(RegisterEvent(
-                      email!, password!, prefs.getString('langCode') ?? 'en'));
+                  userBloc.add(RegisterEvent(email!, password!));
                   drawerBloc.add(ItemTappedEvent(TabPage.shops));
                   setState(() {});
                 },

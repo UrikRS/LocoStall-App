@@ -46,5 +46,4 @@ flutter:
       fonts:
         - asset: lib/assets/fonts/Ysabeau_SC/YsabeauSC-VariableFont_wght.ttf
   assets:
-    - lib/assets/shops/
     - lib/assets/logos/

@@ -27,7 +27,7 @@ class DrawerState {
 
 /* BLoC */
 class DrawerBloc extends Bloc<DrawerEvent, DrawerState> {
-  DrawerBloc() : super(DrawerState(TabPage.markets)) {
+  DrawerBloc() : super(DrawerState(TabPage.shops)) {
     on<ItemTappedEvent>((event, emit) => emit(DrawerState(event.tab)));
   }
 }

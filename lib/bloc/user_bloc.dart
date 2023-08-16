@@ -18,9 +18,8 @@ class LogoutEvent extends UserEvent {}
 class RegisterEvent extends UserEvent {
   final String email;
   final String password;
-  final String langCode;
 
-  RegisterEvent(this.email, this.password, this.langCode);
+  RegisterEvent(this.email, this.password);
 }
 
 class UpdateEvent extends UserEvent {
@@ -74,8 +73,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
     on<RegisterEvent>((event, emit) async {
       try {
-        final (user, userData) = await ApiClient()
-            .userRegister(event.email, event.password, event.langCode);
+        final (user, userData) =
+            await ApiClient().userRegister(event.email, event.password);
         final prefs = await SharedPreferences.getInstance();
         prefs.setInt('userId', userData.userId);
         emit(UserState(user, userData));

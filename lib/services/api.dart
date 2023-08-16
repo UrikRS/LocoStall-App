@@ -67,10 +67,11 @@ class ApiClient {
         shopDetail_['rating'],
         menus,
         shopDetail_['description'],
+        shopDetail_['cover'],
       );
       return shopDetail;
     } catch (e) {
-      return ShopDetail(0, 0, 'UNKNOWN', langCode, 0, [], '');
+      return ShopDetail(0, 0, 'UNKNOWN', langCode, 0, [], '', '');
     }
   }
 
@@ -176,10 +177,7 @@ class ApiClient {
     }
   }
 
-  Future<(User, UserData)> userRegister(email, password, langCode) async {
-    if (langCode == 'ja') {
-      langCode = 'jp';
-    }
+  Future<(User, UserData)> userRegister(email, password) async {
     Uri url = Uri.parse('$host/$path/user');
     try {
       final response = await post(url,
@@ -188,7 +186,6 @@ class ApiClient {
           },
           body: jsonEncode({
             'mail': email,
-            'nLang': langCode,
             'password': password,
           }));
       dynamic user_ = jsonDecode(response.body)['data'];

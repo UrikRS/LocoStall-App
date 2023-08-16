@@ -22,6 +22,7 @@ class ShopDetail {
   final int rating;
   final List<Menu>? menus;
   final String description;
+  final String cover;
 
   ShopDetail(
     this.id,
@@ -31,6 +32,7 @@ class ShopDetail {
     this.rating,
     this.menus,
     this.description,
+    this.cover,
   );
 
   Menu? findMenuById(int prodId) {

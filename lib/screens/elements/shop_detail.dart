@@ -66,14 +66,16 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                 pinned: true,
                 expandedHeight: MediaQuery.of(context).size.height * .25,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Image.asset(
-                    'lib/assets/shops/${shopDetail?.shopId ?? 1}-2.jpg',
+                  background: CachedNetworkImage(
+                    imageUrl: shopDetail?.cover ??
+                        'https://dummyimage.com/300x180/ccc/fff.jpg',
                     fit: BoxFit.cover,
                   ),
                   title: Text(
                     shopDetail?.name ?? 'UNKNOWN',
                     style: TextStyle(
                       color: Colors.grey.shade800,
+                      fontSize: 20,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -108,7 +110,7 @@ class _ShopDetailDialogState extends State<ShopDetailDialog> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             shopDetail?.description ?? 'UNKNOWN',
-                            style: const TextStyle(fontSize: 20),
+                            style: const TextStyle(fontSize: 18),
                           ),
                         ),
                       ),
@@ -285,61 +287,85 @@ class _MenuItemCardState extends State<MenuItemCard> {
               ],
               title: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: constraints.maxWidth * .5,
-                      child: Text(
-                        menuItem!.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                child: SizedBox(
+                  height: 36,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: constraints.maxWidth * .5,
+                        child: Text(
+                          menuItem!.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'NT ${menuItem.price}',
                         style: const TextStyle(
                           fontSize: 16,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              description: const SizedBox(height: 12),
+              footer: (cartBloc.state.cartItems.contains(menuItem.prodId))
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.remove,
+                            size: 18,
+                          ),
+                          onPressed: () => cartBloc
+                              .add(RemoveFromCartEvent(menuItem.prodId)),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          cartBloc.state.cartItems
+                              .where((item) => item == menuItem.prodId)
+                              .length
+                              .toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.add,
+                            size: 18,
+                          ),
+                          onPressed: () =>
+                              cartBloc.add(AddToCartEvent(menuItem.prodId)),
+                        ),
+                      ],
+                    )
+                  : SizedBox(
+                      height: 30,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: TextButton(
+                          child: const Text(
+                            'ORDER',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                            ),
+                          ),
+                          onPressed: () =>
+                              cartBloc.add(AddToCartEvent(menuItem.prodId)),
                         ),
                       ),
                     ),
-                    Text(
-                      'NT ${menuItem.price}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              footer: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.remove,
-                      size: 18,
-                    ),
-                    onPressed: () =>
-                        cartBloc.add(RemoveFromCartEvent(menuItem.prodId)),
-                  ),
-                  Text(
-                    cartBloc.state.cartItems
-                        .where((item) => item == menuItem.prodId)
-                        .length
-                        .toString(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.add,
-                      size: 18,
-                    ),
-                    onPressed: () =>
-                        cartBloc.add(AddToCartEvent(menuItem.prodId)),
-                  ),
-                ],
-              ),
             );
           }),
         ),

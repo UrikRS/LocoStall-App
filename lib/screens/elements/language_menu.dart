@@ -32,7 +32,7 @@ class _LangMenuState extends State<LangMenu> {
           onChanged: (value) {
             languageBloc.add(ChangeLanguageEvent('ja'));
             if (userBloc.state.user != null) {
-              userBloc.add(UpdateEvent(nLang: 'ja'));
+              userBloc.add(UpdateEvent(nLang: 'jp'));
             }
           },
           child: const Text('日本語'),
