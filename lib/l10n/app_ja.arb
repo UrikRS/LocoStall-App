@@ -16,5 +16,10 @@
     "logout": "ログアウト",
     "signup": "登録",
 	"settings" : "設定",
-    "language": "言語"
+    "language": "言語",
+    "foodReady": "受け取り可能",
+    "cooking": "調理中",
+    "waiting": "注文確認待ち",
+    "finish": "受け取り完了",
+    "cancel": "キャンセル"
 }

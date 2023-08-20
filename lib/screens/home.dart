@@ -10,7 +10,7 @@ import 'package:locostall/bloc/drawer_bloc.dart';
 import 'package:locostall/bloc/user_bloc.dart';
 import 'package:locostall/screens/take_picture.dart';
 import 'package:locostall/screens/tabs/all.dart';
-import 'package:locostall/screens/elements/edit_profile.dart';
+// import 'package:locostall/screens/elements/edit_profile.dart';
 import 'package:locostall/screens/elements/language_menu.dart';
 
 class Home extends StatefulWidget {
@@ -55,7 +55,12 @@ class _HomeState extends State<Home> {
             case TabPage.shops:
               return const ShopsTab();
             case TabPage.waiting:
-              return const WaitingTab();
+              return BlocListener<WaitingBloc, WaitingState>(
+                listener: (context, state) {
+                  setState(() {});
+                },
+                child: const WaitingTab(),
+              );
             case TabPage.login:
               return LoginTab(
                 onSubmitted: (email, password) {
@@ -73,7 +78,7 @@ class _HomeState extends State<Home> {
                 },
               );
             case TabPage.settings:
-              return const Center(child: Text("TODO:"));
+              return const SettingsTab();
           }
         },
       ),
@@ -93,13 +98,29 @@ class _HomeState extends State<Home> {
                       alignment: Alignment.centerRight,
                     ),
                   ),
-                  accountName: Text(state.userData?.name ?? ' '),
-                  accountEmail: Text(state.userData?.email ?? 'not login'),
-                  arrowColor: Colors.transparent,
-                  onDetailsPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => const EditProfile(),
+                  accountName: Text(
+                    state.userData?.name ?? ' ',
+                    style: const TextStyle(
+                      fontFamily: 'YsabeauSC',
+                      fontSize: 16,
+                      color: Color(0xFF3F3B34),
+                      letterSpacing: 2,
+                    ),
                   ),
+                  accountEmail: Text(
+                    state.userData?.email ?? 'not login',
+                    style: const TextStyle(
+                      fontFamily: 'YsabeauSC',
+                      fontSize: 16,
+                      color: Color(0xFF3F3B34),
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  arrowColor: Colors.transparent,
+                  // onDetailsPressed: () => showDialog(
+                  //   context: context,
+                  //   builder: (context) => const EditProfile(),
+                  // ),
                 ),
                 ListTile(
                   leading: const Icon(Icons.storefront),
@@ -152,16 +173,16 @@ class _HomeState extends State<Home> {
                     setState(() {});
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: Text(l10n.settings),
-                  selected: drawerBloc.state.tab == TabPage.settings,
-                  onTap: () {
-                    drawerBloc.add(ItemTappedEvent(TabPage.settings));
-                    Navigator.pop(context);
-                    setState(() {});
-                  },
-                ),
+                // ListTile(
+                //   leading: const Icon(Icons.settings),
+                //   title: Text(l10n.settings),
+                //   selected: drawerBloc.state.tab == TabPage.settings,
+                //   onTap: () {
+                //     drawerBloc.add(ItemTappedEvent(TabPage.settings));
+                //     Navigator.pop(context);
+                //     setState(() {});
+                //   },
+                // ),
               ],
             ),
           );

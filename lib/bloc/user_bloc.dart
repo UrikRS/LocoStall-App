@@ -73,11 +73,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
     on<RegisterEvent>((event, emit) async {
       try {
-        final (user, userData) =
+        final (user, _) =
             await ApiClient().userRegister(event.email, event.password);
         final prefs = await SharedPreferences.getInstance();
-        prefs.setInt('userId', userData.userId);
-        emit(UserState(user, userData));
+        if (user.userId != null) {
+          final userData = await ApiClient().getUserData(user.userId);
+          prefs.setInt('userId', userData.userId);
+          emit(UserState(user, userData));
+        } else {
+          emit(UserState(null, null));
+        }
       } catch (e) {
         emit(UserState(null, null));
       }

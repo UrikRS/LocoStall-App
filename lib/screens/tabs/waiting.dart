@@ -2,10 +2,11 @@ import 'package:fluid_dialog/fluid_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locostall/bloc/user_bloc.dart';
+import 'package:locostall/bloc/waiting_bloc.dart';
 import 'package:locostall/models/order.dart';
-import 'package:locostall/services/api.dart';
 import 'package:sks_ticket_view/sks_ticket_view.dart';
 import 'package:timelines/timelines.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WaitingTab extends StatefulWidget {
   const WaitingTab({super.key});
@@ -15,7 +16,6 @@ class WaitingTab extends StatefulWidget {
 }
 
 class _WaitingTabState extends State<WaitingTab> {
-  List<Order> _orders = [];
   Map<int, String> states = {
     0: 'foodReady',
     1: 'cooking',
@@ -32,172 +32,187 @@ class _WaitingTabState extends State<WaitingTab> {
 
   Future<void> _setData() async {
     final userBloc = BlocProvider.of<UserBloc>(context);
+    final waitingBloc = BlocProvider.of<WaitingBloc>(context);
     if (userBloc.state.user != null) {
-      List<Order> orders =
-          await ApiClient().getUserOrders(userBloc.state.user!.userId);
-      if (mounted) {
-        setState(() {
-          _orders = orders;
-        });
-      }
+      waitingBloc.add(FetchDataEvent(userBloc.state.user!.userId!));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Timeline.tileBuilder(
-      theme: TimelineThemeData(
-        color: Colors.amber,
-        nodePosition: 0,
-        indicatorPosition: 0,
-        indicatorTheme: const IndicatorThemeData(size: 20),
-        connectorTheme: const ConnectorThemeData(thickness: 4),
-      ),
-      padding: const EdgeInsets.all(24),
-      builder: TimelineTileBuilder.connected(
-        connectionDirection: ConnectionDirection.after,
-        contentsAlign: ContentsAlign.basic,
-        itemCount: 5,
-        contentsBuilder: (context, index) {
-          List<Widget> listContent = [];
-          listContent.add(
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '     ${states[index]}',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700,
+    final waitingBloc = BlocProvider.of<WaitingBloc>(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    Map<int, String> title = {
+      0: l10n.foodReady,
+      1: l10n.cooking,
+      2: l10n.waiting,
+      3: l10n.finish,
+      4: l10n.cancel,
+    };
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        _setData();
+        setState(() {});
+      },
+      child: Timeline.tileBuilder(
+        theme: TimelineThemeData(
+          color: Colors.amber,
+          nodePosition: 0,
+          indicatorPosition: 0,
+          indicatorTheme: const IndicatorThemeData(size: 20),
+          connectorTheme: const ConnectorThemeData(thickness: 4),
+        ),
+        padding: const EdgeInsets.all(24),
+        builder: TimelineTileBuilder.connected(
+          connectionDirection: ConnectionDirection.after,
+          contentsAlign: ContentsAlign.basic,
+          itemCount: 5,
+          contentsBuilder: (context, index) {
+            List<Widget> listContent = [];
+            listContent.add(
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '     ${title[index]}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade700,
+                  ),
                 ),
               ),
-            ),
-          );
-          for (Order order in _orders) {
-            if (order.state == states[index]) {
-              var pay = 0;
-              for (Item item in order.itemList) {
-                pay += item.qty * (item.price ?? 0);
-              }
-              listContent.add(
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Card(
-                    margin: const EdgeInsets.all(8),
-                    elevation: 3,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('${order.shopName}'),
-                            Text(
-                              'NT $pay',
-                              style: TextStyle(
-                                color: Colors.green.shade400,
+            );
+            listContent.add(const SizedBox(height: 10));
+            for (Order order in waitingBloc.state.orders) {
+              if (order.state == states[index]) {
+                var pay = 0;
+                for (Item item in order.itemList) {
+                  pay += item.qty * (item.price ?? 0);
+                }
+                listContent.add(
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Card(
+                      margin: const EdgeInsets.all(8),
+                      elevation: 3,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                child: Text(' ${order.shopName}'),
                               ),
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          Receipt(order: order, pay: pay));
-                                },
-                                child: Text(
-                                  'VIEW',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade800,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ))
-                          ],
+                              Text(
+                                'NT $pay',
+                                style: TextStyle(
+                                  color: Colors.green.shade400,
+                                ),
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            Receipt(order: order, pay: pay));
+                                  },
+                                  child: Text(
+                                    'VIEW',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade800,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ))
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
+                );
+              }
+            }
+            return Column(
+              children: listContent,
+            );
+          },
+          indicatorBuilder: (context, index) {
+            if (states[index] == 'foodReady') {
+              return DotIndicator(
+                color: Colors.green.shade400,
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              );
+            } else if (states[index] == 'cooking') {
+              return const DotIndicator(
+                color: Colors.amber,
+                child: Icon(
+                  Icons.more_horiz,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              );
+            } else if (states[index] == 'waiting') {
+              return DotIndicator(
+                color: Colors.red.shade300,
+                child: const Icon(
+                  Icons.more_horiz,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              );
+            } else if (states[index] == 'finish') {
+              return const DotIndicator(
+                color: Colors.grey,
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              );
+            } else {
+              return const DotIndicator(
+                color: Colors.grey,
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20.0,
                 ),
               );
             }
-          }
-          return Column(
-            children: listContent,
-          );
-        },
-        indicatorBuilder: (context, index) {
-          if (states[index] == 'foodReady') {
-            return DotIndicator(
-              color: Colors.green.shade400,
-              child: const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 20.0,
-              ),
-            );
-          } else if (states[index] == 'cooking') {
-            return const DotIndicator(
-              color: Colors.amber,
-              child: Icon(
-                Icons.more_horiz,
-                color: Colors.white,
-                size: 20.0,
-              ),
-            );
-          } else if (states[index] == 'waiting') {
-            return DotIndicator(
-              color: Colors.red.shade300,
-              child: const Icon(
-                Icons.more_horiz,
-                color: Colors.white,
-                size: 20.0,
-              ),
-            );
-          } else if (states[index] == 'finish') {
-            return const DotIndicator(
-              color: Colors.grey,
-              child: Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 20.0,
-              ),
-            );
-          } else {
-            return const DotIndicator(
-              color: Colors.grey,
-              child: Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 20.0,
-              ),
-            );
-          }
-        },
-        connectorBuilder: (context, index, type) {
-          if (states[index] == 'foodReady') {
-            return SolidLineConnector(
-              color: Colors.green.shade400,
-              thickness: 5,
-            );
-          } else if (states[index] == 'cooking') {
-            return const SolidLineConnector(
-              color: Colors.amber,
-              thickness: 5,
-            );
-          } else if (states[index] == 'waiting') {
-            return SolidLineConnector(
-              color: Colors.red.shade300,
-              thickness: 5,
-            );
-          } else {
-            return const SolidLineConnector(
-              color: Colors.grey,
-              thickness: 5,
-            );
-          }
-        },
+          },
+          connectorBuilder: (context, index, type) {
+            if (states[index] == 'foodReady') {
+              return SolidLineConnector(
+                color: Colors.green.shade400,
+                thickness: 5,
+              );
+            } else if (states[index] == 'cooking') {
+              return const SolidLineConnector(
+                color: Colors.amber,
+                thickness: 5,
+              );
+            } else if (states[index] == 'waiting') {
+              return SolidLineConnector(
+                color: Colors.red.shade300,
+                thickness: 5,
+              );
+            } else {
+              return const SolidLineConnector(
+                color: Colors.grey,
+                thickness: 5,
+              );
+            }
+          },
+        ),
       ),
     );
   }

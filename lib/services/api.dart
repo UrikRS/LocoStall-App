@@ -195,14 +195,14 @@ class ApiClient {
         user_['line_id'],
         user_['display_name'],
         user_['native_lang'],
-        user_['email'],
+        user_['mail'],
         user_['password'],
         user_['type'],
         user_['shop_id'],
       );
       return (user, userData);
     } catch (e) {
-      return (User(null), UserData(0, null, null, '', '', '', '', null));
+      return (User(null), UserData(0, null, null, 'en', '', '', '', null));
     }
   }
 

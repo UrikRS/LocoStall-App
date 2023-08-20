@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
   intl: any
   shared_preferences: ^2.2.0
   cached_network_image: ^3.2.3
@@ -34,6 +35,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+
+flutter_launcher_icons:
+  android: "lib/assets/logos/LocoStall_design_finish_locostall_logo_2.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true

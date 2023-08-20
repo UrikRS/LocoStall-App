@@ -197,7 +197,6 @@ class MenusCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final menus = shopDetail?.menus;
-    var screenHeight = MediaQuery.of(context).size.height;
     int itemCount = (menus?.length ?? 0) ~/ 2;
 
     return CarouselSlider.builder(
@@ -205,7 +204,7 @@ class MenusCarousel extends StatelessWidget {
         disableCenter: true,
         viewportFraction: .7,
         autoPlay: false,
-        height: menus?.length == 1 ? screenHeight * .4 : screenHeight * .8,
+        height: menus?.length == 1 ? 350 : 700,
         enableInfiniteScroll: false,
       ),
       itemCount: menus?.length == 1 ? 1 : itemCount,
@@ -288,7 +287,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
               title: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: SizedBox(
-                  height: 36,
+                  height: 44,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -315,7 +314,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                   ),
                 ),
               ),
-              description: const SizedBox(height: 12),
+              description: const SizedBox(height: 5),
               footer: (cartBloc.state.cartItems.contains(menuItem.prodId))
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -350,7 +349,7 @@ class _MenuItemCardState extends State<MenuItemCard> {
                       ],
                     )
                   : SizedBox(
-                      height: 30,
+                      height: 36,
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: TextButton(

@@ -84,5 +84,30 @@
     "@language": {
         "type": "text",
         "context": "LANGUAGE"
+    },
+    "foodReady": "Food Ready",
+    "@foodReady": {
+        "type": "text",
+        "context": "Food Ready"
+    },
+    "cooking": "Cooking",
+    "@cooking": {
+        "type": "text",
+        "context": "Cooking"
+    },
+    "waiting": "Waiting",
+    "@waiting": {
+        "type": "text",
+        "context": "Waiting"
+    },
+    "finish": "Finished",
+    "@finish": {
+        "type": "text",
+        "context": "Finished"
+    },
+    "cancel": "Canceled",
+    "@candel": {
+        "type": "text",
+        "context": "Canceled"
     }
 }

@@ -16,5 +16,10 @@
     "logout": "登出",
     "signup": "註冊",
 	"settings" : "設定",
-    "language": "語言"
+    "language": "語言",
+    "foodReady": "可取餐",
+    "cooking": "製作中",
+    "waiting": "等待確認",
+    "finish": "訂單完成",
+    "cancel": "訂單取消"
 }
